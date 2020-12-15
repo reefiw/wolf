@@ -1,46 +1,47 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cube3D.h                                           :+:      :+:    :+:   */
+/*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2020/12/16 00:44:24 by plurlene         ###   ########.fr       */
+/*   Created: 2020/11/26 15:35:49 by plurlene          #+#    #+#             */
+/*   Updated: 2020/12/08 17:54:12 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CUBE3D_H
+#ifndef GET_NEXT_LINE_H
 
-# define CUBE3D_H
-
-typedef struct	s_image
-{
-	void	*img;
-	char	*addr;
-	int		bits_per_pixel;
-	int		size_line;
-	int		endian;
-}				t_image;
-
-typedef struct	s_player
-{
-	float	x;
-	float	y;
-	float	view_angle;
-	float	fov;
-}				t_player;
-
-typedef struct	s_map
-{
-	char	*data;
-	int		width;
-	int		height;
-}				t_map;
+# define GET_NEXT_LINE_H
 
 # include <stdlib.h>
-# include <unistd.h>
 # include <stdio.h>
-# include <math.h>
+# include <fcntl.h>
+# include <unistd.h>
+# include <limits.h>
+
+int		get_next_line(int fd, char **line);
+int		ft_strlen(char *str);
+int		e_l_i(char *str);
+char	*ft_strjoin(char *s1, char *s2, int bfree);
+char	*ft_strdup(char *s1, int bfree);
+
+#endif
+
+#ifndef BUFFER_SIZE
+
+# define BUFFER_SIZE 1
+
+#endif
+
+#ifndef BS
+
+# define BS BUFFER_SIZE
+
+#endif
+
+#ifndef OPEN_MAX
+
+# define OPEN_MAX 1024
 
 #endif
