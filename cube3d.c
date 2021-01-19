@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2020/12/16 00:57:38 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/19 16:32:13 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,16 +28,40 @@ t_image	*new_image(void *n_img, char *n_addr, int n_bits_per_pixel, int n_size_l
 	return (new_image);
 }
 
-t_player *init_player(float cord_x, float cord_y, float n_angle_view, float n_fov)
+t_screen *new_screen(int width, int height)
+{
+	t_screen *new_screen;
+
+	if (!(new_screen = (t_screen *)malloc(sizeof(t_screen))))
+		return (NULL);
+	new_screen->width = width;
+	new_screen->height = height;
+	return(new_screen);
+}
+
+t_player *init_player(float n_x, float n_y, float n_dir_x, float n_dir_y, float n_plane_x, float n_plane_y)
 {
 	t_player *new_player;
 
 	new_player = (t_player *)malloc(sizeof(t_player));
-	new_player->x = cord_x;
-	new_player->y = cord_y;
-	new_player->view_angle = n_angle_view;
-	new_player->fov = n_fov;
+	new_player->x = n_x;
+	new_player->y = n_y;
+	new_player->dir_x = n_dir_x;
+	new_player->dir_y = n_dir_y;
+	new_player->plane_x = n_plane_x;
+	new_player->plane_y = n_plane_y;
+
 	return (new_player);
+}
+
+t_tex *init_tex(int width, int height)
+{
+	t_tex *new_tex;
+
+	new_tex = (t_tex *)malloc(sizeof(t_tex));
+	new_tex->width = width;
+	new_tex->height = height;
+	return (new_tex);
 }
 
 void	put_pixel(t_image *img, int x, int y, int color)
@@ -80,7 +104,7 @@ void	fill_back(t_image *img)
 	}
 }
 
-void	cast_ray(t_image *img, t_player *player, t_map *map, float view_angle, int d_y)
+void	cast_ray(t_vars *vars, float dir_angle, int d_y)
 {
 	float	i;
 	float	x;
@@ -88,136 +112,335 @@ void	cast_ray(t_image *img, t_player *player, t_map *map, float view_angle, int 
 	int		k;
 
 	i = 0.0;
-//	k = ft_strlen(map->data);
 	while (1)
 	{
-		x = player->x + (i * cos(view_angle));
-		y = player->y + (i * sin(view_angle));
-		if (map->data[((int)x + (int)y * map->width)] == '1') {
-			printf("x: %d y: %d\n", (int)x, (int)y);
+		x = vars->player->x + (i * cos(dir_angle));
+		y = vars->player->y + (i * sin(dir_angle));
+		if (vars->map->data[(int)y][(int)x] == '1')
 			break ;
-		}
-//		printf("x: %f y: %f\n", x, y);
-		i += 0.001;
+		i += 0.01;
 	}
-	// printf("i: %f\n", i);
 	k = -1;
 	i = i > 0 && i < 1 ? 1 : i;
 	int column_height = 1080 / i;
 	if (i != 0)
 		while (++k < column_height)
-			put_pixel(img, d_y, (1080 / 2) - (column_height / 2) + k, 0x00AAAAA0);
+			put_pixel(vars->img, d_y, (1080 / 2) - (column_height / 2) + k, 0x00AAAAA0);
 }
 
-void	put_image(t_image *img, t_player *player, t_map *map)
+unsigned int color_handler(int map_x, int map_y, t_vars *vars, int side)
 {
-	float angle;
-	int k;
+	unsigned int color;
 
-	k = 0;
-	while (++k < 1920)
-	{
-		angle = player->view_angle - player->fov / 2 + (player->fov * k) / 1920.0f;
-		cast_ray(img, player, map, angle, k);
-		// angle += i;
-	}
-	// cast_ray(img, player, map, player->view_angle, 1920 / 2);
+	color = 0x00AAAAA0;
+	if (vars->map->data[map_y][map_x] == 1)
+		color = 0x00AAAAA0;
+	if (side == 1)
+		color = color / 2;
+	return color;
 }
 
-t_map	*get_map(int fd)
+void	put_image(t_vars *vars)
+{
+	double ray_dir_x;
+	double ray_dir_y;
+	double camera_x;
+	double sideDist_x;
+	double sideDist_y;
+	double deltaDist_x;
+	double deltaDist_y;
+	double perpWallDist;
+	double wallX;
+	double step;
+	double texPos;
+
+	int		lineHeight;
+	int		drawStart;
+	int		drawEnd;
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	int		hit;
+	int		side;
+	int		texNum;
+	int		texX;
+	int		texY;
+	int i;
+
+//	unsigned int **buffer[vars->screen->height][vars->screen->width];
+
+	i = 0;
+	while (i < vars->screen->width)
+	{
+		camera_x = 2 * i / (double)vars->screen->width - 1;
+		ray_dir_x = vars->player->dir_x + vars->player->plane_x * camera_x;
+		ray_dir_y = vars->player->dir_y + vars->player->plane_y * camera_x;
+
+		map_x = (int)vars->player->x;
+		map_y = (int)vars->player->y;
+
+		deltaDist_x = fabs(1 / ray_dir_x);
+		deltaDist_y = fabs(1 / ray_dir_y);
+
+		if (ray_dir_x < 0)
+		{
+			step_x = -1;
+			sideDist_x = (vars->player->x - map_x) * deltaDist_x;
+		}
+		else
+		{
+			step_x = 1;
+			sideDist_x = (map_x + 1.0 - vars->player->x) * deltaDist_x;
+		}
+		if (ray_dir_y < 0)
+		{
+			step_y = -1;
+			sideDist_y = (vars->player->y - map_y) * deltaDist_y;
+		}
+		else
+		{
+			step_y = 1;
+			sideDist_y = (map_y + 1.0 - vars->player->y) * deltaDist_y;
+		}
+		hit = 0;
+		while (hit == 0)
+		{
+			if (sideDist_x < sideDist_y)
+			{
+				sideDist_x += deltaDist_x;
+				map_x += step_x;
+				side = 0;
+			}
+			else
+			{
+				sideDist_y += deltaDist_y;
+				map_y += step_y;
+				side = 1;
+			}
+			if (vars->map->data[map_y][map_x] == '1')
+				hit = 1;
+		}
+
+		if (side == 0)
+			perpWallDist = (map_x - vars->player->x + (1 - step_x) / 2) / ray_dir_x;
+		else
+			perpWallDist = (map_y - vars->player->y + (1 - step_y) / 2) / ray_dir_y;
+		lineHeight = (int) (vars->screen->height / perpWallDist);
+		drawStart = -lineHeight / 2 + vars->screen->height / 2;
+		drawStart = drawStart < 0 ? 0 : drawStart;
+		drawEnd = lineHeight / 2 + vars->screen->height / 2;
+		drawEnd = drawEnd >= vars->screen->height ? vars->screen->height - 1 : drawEnd;
+
+		texNum = vars->map->data[map_y][map_x] - 1;
+		if (side == 0)
+			wallX = vars->player->y + perpWallDist * ray_dir_y;
+		else
+			wallX = vars->player->x + perpWallDist * ray_dir_x;
+		wallX -= floor(wallX);
+		texX = (int)(wallX * (float)vars->tex->width);
+		if (side == 0 && ray_dir_x > 0)
+			texX = vars->tex->width = texX - 1;
+		if (side == 0 && ray_dir_y < 0)
+			texX = vars->tex->width - texX - 1;
+		step = 1.0 * vars->tex->height / lineHeight;
+		texPos = (drawStart - vars->screen->height / 2 + lineHeight / 2) * step;
+
+		while(drawStart < drawEnd)
+		{
+			texY = (int)texPos & (vars->tex->height - 1);
+			texPos += step;
+
+			put_pixel(vars->img, i, drawStart, color_handler(map_x, map_y, vars, side));
+			drawStart++;
+		}
+		i++;
+	}
+}
+
+void get_map2(int fd, t_vars *vars)
 {
 	t_map	*map;
-	char	*buf;
+	t_screen *screen;
+	char *buf;
+	char *buf2;
+	int i;
+	int j;
 
 	buf = NULL;
-	map = (t_map *)malloc(sizeof(t_map));
-	map->data = (char *)malloc(1);
-	map->data[0] = '\0';
+	buf2 = NULL;
+	screen = (t_screen *)malloc(sizeof(t_screen));
+	vars->screen = screen;
 	get_next_line(fd, &buf);
-	map->data = ft_strjoin(map->data, buf, 1);
-	map->width = ft_strlen(map->data);
-	map->height = 1;
+	i = 0;
+	if (buf[0] == 'R')
+		i = 1;
+	vars->screen->width = 0;
+	vars->screen->height= 0;
+	while (buf[++i] >= '0' && buf[i] <= '9')
+		vars->screen->width = vars->screen->width * 10 + buf[i] - '0';
+	while (buf[++i] >= '0' && buf[i] <= '9')
+		vars->screen->height = vars->screen->height * 10 + buf[i] - '0';
 	free(buf);
-	while (get_next_line(fd, &buf))
+	get_next_line(fd, &buf);
+	vars->tex->n = ft_strdup(&buf[3], 0);
+	free(buf);
+	get_next_line(fd, &buf);
+	vars->tex->s = ft_strdup(&buf[3], 0);
+	free(buf);
+	get_next_line(fd, &buf);
+	vars->tex->w = ft_strdup(&buf[3], 0);
+	free(buf);
+	get_next_line(fd, &buf);
+	vars->tex->e = ft_strdup(&buf[3], 0);
+	free(buf);
+	get_next_line(fd, &buf);
+	map = (t_map *)malloc(sizeof(t_map));
+	map->width = ft_strlen(buf);
+	map->height = 1;
+	while (get_next_line(fd, &buf2))
 	{
-		map->data = ft_strjoin(map->data, buf, 1);
+		buf = ft_strjoin(buf, buf2, 1);
 		map->height++;
-		free(buf);
+		free(buf2);
 	}
+	map->data = (char **)malloc(sizeof(char *) * map->height + 1);
+	map->data[map->height] = 0;
+	i = 0;
+	j = 0;
+	while (i < map->height)
+	{
+		map->data[i] = (char *)malloc(map->width + 1);
+		while (j < map->width)
+		{
+			map->data[i][j] = *(buf++);
+			j++;
+		}
+		map->data[i][j] = 0;
+		j = 0;
+		i++;
+	}
+	i = i * map->width;
+	while (i-- > 0)
+		buf--;
+	if (buf2)
+		free(buf2);
 	if (buf)
 		free(buf);
-	return (map);
+	vars->map = map;
 }
 
-void	set_minimap(t_player *player, t_image *img, t_map *map, int d_x, int d_y)
+void	set_minimap2(t_player *player, t_image *img, t_map *map, int d_x, int d_y)
 {
 	int d;
+	int i;
 	int k;
-	float i;
-	float x;
-	float y;
+	int j;
 
+	d = 20;
 	k = 0;
-	d = 60;
-	i = 1;
-	while (i <= d * 3)
+	i = 0;
+	while (i < map->height)
 	{
-		x = player->x * d + d / 2 + (i * cos(player->view_angle));
-		y = player->y * d + d / 2 + (i * sin(player->view_angle));
-		i += 0.1;
-		put_pixel(img, d_x + (int)x, d_y + (int)y, 0xFF0000);
+		j = 0;
+		while (j < map->width)
+		{
+			if (map->data[i][j] == '1')
+				draw_square(img, d, d_x + (((k / d) % map->width) * d), d_y + ((((k / d)) / map->width) * d), 0xFFFFFFF);
+			k += d;
+			j++;
+		}
+		i++;
 	}
-	i = 1;
-	while (i <= d * 3)
+
+	draw_square(img, 10, d_x + (player->x * d), d_y + (player->y * d), 0xFF0000);
+}
+
+int key_hook(int key_code, void *param)
+{
+	float tempDir;
+	float tempPlane;
+	t_vars *vars;
+
+	vars = (t_vars *)param;
+	if (key_code == 13)
 	{
-		x = player->x * d + d / 2 + (i * cos(player->view_angle - player->fov / 2));
-		y = player->y * d + d / 2 + (i * sin(player->view_angle - player->fov / 2));
-		i += 0.1;
-		put_pixel(img, d_x + (int)x, d_y + (int)y, 0xA50000);
+		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x + vars->player->dir_x * SPEED)] != '1')
+			vars->player->x += vars->player->dir_x * SPEED;
+		if (vars->map->data[(int)(vars->player->y + vars->player->dir_y * SPEED)][(int)(vars->player->x)] != '1')
+			vars->player->y += vars->player->dir_y * SPEED;
 	}
-	i = 1;
-	while (i <= d * 3)
+	if (key_code == 1)
 	{
-		x = player->x * d + d / 2 + (i * cos(player->view_angle + player->fov / 2));
-		y = player->y * d + d / 2 + (i * sin(player->view_angle + player->fov / 2));
-		i += 0.1;
-		put_pixel(img, d_x + (int)x, d_y + (int)y, 0xA50000);
+		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x - vars->player->dir_x * SPEED)] != '1')
+			vars->player->x -= vars->player->dir_x * SPEED;
+		if (vars->map->data[(int)(vars->player->y - vars->player->dir_y * SPEED)][(int)(vars->player->x)] != '1')
+			vars->player->y -= vars->player->dir_y * SPEED;
 	}
-	while (map->data[k / d])
+	if (key_code == 2)
 	{
-		if (map->data[k / d] == '1')
-			draw_square(img, d, d_x + (k % (map->width * d)), d_y + ((k / (map->height * d + d)) * d), 0xFFFFFFF);
-		k += d;
+		if (vars->map->data[(int)vars->player->y][(int)(vars->player->x + vars->player->plane_x * SPEED)] != '1')
+			vars->player->x += vars->player->plane_x * SPEED;
+		if (vars->map->data[(int)(vars->player->y + vars->player->plane_y * SPEED)][(int)(vars->player->x)] != '1')
+			vars->player->y += vars->player->plane_y * SPEED;
 	}
-	draw_square(img, 10, d_x + (player->x * d) + 25, d_y + (player->y * d) + 25, 0xFF0000);
+	if (key_code == 0)
+	{
+		if (vars->map->data[(int)vars->player->y][(int)(vars->player->x - vars->player->plane_x * SPEED)] != '1')
+			vars->player->x -= vars->player->plane_x * SPEED;
+		if (vars->map->data[(int)(vars->player->y - vars->player->plane_y * SPEED)][(int)(vars->player->x)] != '1')
+			vars->player->y -= vars->player->plane_y * SPEED;
+	}
+	if (key_code == 123)
+	{
+		tempDir = vars->player->dir_x;
+		vars->player->dir_x = vars->player->dir_x * cos(-RSPEED) - vars->player->dir_y * sin(-RSPEED);
+		vars->player->dir_y = tempDir * sin(-RSPEED) + vars->player->dir_y * cos(-RSPEED);
+		tempPlane = vars->player->plane_x;
+		vars->player->plane_x = vars->player->plane_x * cos(-RSPEED) - vars->player->plane_y * sin(-RSPEED);
+		vars->player->plane_y = tempPlane * sin(-RSPEED) + vars->player->plane_y * cos(-RSPEED);
+	}
+	if (key_code == 124)
+	{
+		tempDir = vars->player->dir_x;
+		vars->player->dir_x = vars->player->dir_x * cos(RSPEED) - vars->player->dir_y * sin(RSPEED);
+		vars->player->dir_y = tempDir * sin(RSPEED) + vars->player->dir_y * cos(RSPEED);
+		tempPlane = vars->player->plane_x;
+		vars->player->plane_x = vars->player->plane_x * cos(RSPEED) - vars->player->plane_y * sin(RSPEED);
+		vars->player->plane_y = tempPlane * sin(RSPEED) + vars->player->plane_y * cos(RSPEED);
+	}
+	fill_back(vars->img);
+	put_image(vars);
+	set_minimap2(vars->player, vars->img, vars->map, 1320, 580);
+	mlx_clear_window(vars->mlx, vars->mlx_window);
+	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img->img, 0, 0);
+	return (1);
 }
 
 int main(void)
 {
-	void		*mlx;
-	void		*mlx_window;
 	int			fd;
-	t_image		*img;
-	t_map		*map;
-	t_player	*player;
-	const float pi = 3.14;
+	t_vars		*vars;
 
-	player = init_player(3.5, 3.8, (7 * pi) / 4, pi / 3);
+	vars = (t_vars *)malloc(sizeof(t_vars));
 
+	vars->player = init_player(2.5, 3.5, 1, 0, 0, 0.66);
+	vars->tex = init_tex(64, 64);
 	fd = open("map.cub", O_RDONLY);
-	map = get_map(fd);
+	get_map2(fd, vars);
 
-	mlx = mlx_init();
-	img = new_image(NULL, NULL, 0, 0, 0);
-	img->img = mlx_new_image(mlx, 1920, 1080);
-	img->addr = mlx_get_data_addr(img->img, &img->bits_per_pixel, &img->size_line, &img->endian);
+//	vars->screen = new_screen(1920, 1080);
+	vars->mlx = mlx_init();
+	vars->img = new_image(NULL, NULL, 0, 0, 0);
+	vars->img->img = mlx_new_image(vars->mlx, vars->screen->width, vars->screen->height);
+	vars->img->addr = mlx_get_data_addr(vars->img->img, &vars->img->bits_per_pixel, &vars->img->size_line, &vars->img->endian);
 
-	fill_back(img);
-	put_image(img, player, map);
-	set_minimap(player, img, map, 1520, 680);
+	fill_back(vars->img);
 
-	mlx_window = mlx_new_window(mlx, 1920, 1080, "cube3D");
-	mlx_put_image_to_window(mlx, mlx_window, img->img, 0, 0);
-
-	mlx_loop(mlx);
+	put_image(vars);
+	set_minimap2(vars->player, vars->img, vars->map, 1320, 580);
+	vars->mlx_window = mlx_new_window(vars->mlx, vars->screen->width, vars->screen->height, "cube3D");
+	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img->img, 0, 0);
+	mlx_hook(vars->mlx_window, 2, 1L<<0, key_hook, vars);
+	mlx_loop(vars->mlx);
 }
