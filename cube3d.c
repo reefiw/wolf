@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/19 16:32:13 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/25 19:16:30 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ t_tex *init_tex(int width, int height)
 	new_tex = (t_tex *)malloc(sizeof(t_tex));
 	new_tex->width = width;
 	new_tex->height = height;
+	new_tex->addr = NULL;
+	new_tex->bbp = 0;
+	new_tex->size_line = 0;
+	new_tex->img = NULL;
 	return (new_tex);
 }
 
@@ -140,6 +144,28 @@ unsigned int color_handler(int map_x, int map_y, t_vars *vars, int side)
 	return color;
 }
 
+unsigned int get_darker_color(unsigned int color, double size)
+{
+	if (size < 1.5)
+		return (color);
+	return (int)((((0xFF0000 & color) >> 16) / (int)size) << 16) +
+			(int)((((0x00FF00 & color) >> 8) / (int)size) << 8) +
+			(int)((0x0000FF & color) / (int)size);
+}
+
+void	get_tex(t_vars *vars, int side)
+{
+	if (side == 0)
+		vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->n, &vars->tex->width, &vars->tex->height);
+	if (side == 1)
+		vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->s, &vars->tex->width, &vars->tex->height);
+	if (side == 2)
+		vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->w, &vars->tex->width, &vars->tex->height);
+	if (side == 3)
+		vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->e, &vars->tex->width, &vars->tex->height);
+	vars->tex->addr = mlx_get_data_addr(vars->tex->img, &vars->tex->bbp, &vars->tex->size_line, &vars->tex->endian);
+}
+
 void	put_image(t_vars *vars)
 {
 	double ray_dir_x;
@@ -163,10 +189,10 @@ void	put_image(t_vars *vars)
 	int		step_y;
 	int		hit;
 	int		side;
-	int		texNum;
 	int		texX;
 	int		texY;
 	int i;
+	unsigned int color;
 
 //	unsigned int **buffer[vars->screen->height][vars->screen->width];
 
@@ -208,15 +234,15 @@ void	put_image(t_vars *vars)
 		{
 			if (sideDist_x < sideDist_y)
 			{
+				side = 0;
 				sideDist_x += deltaDist_x;
 				map_x += step_x;
-				side = 0;
 			}
 			else
 			{
+				side = 1;
 				sideDist_y += deltaDist_y;
 				map_y += step_y;
-				side = 1;
 			}
 			if (vars->map->data[map_y][map_x] == '1')
 				hit = 1;
@@ -232,7 +258,7 @@ void	put_image(t_vars *vars)
 		drawEnd = lineHeight / 2 + vars->screen->height / 2;
 		drawEnd = drawEnd >= vars->screen->height ? vars->screen->height - 1 : drawEnd;
 
-		texNum = vars->map->data[map_y][map_x] - 1;
+//		texNum = vars->map->data[map_y][map_x] - 1;
 		if (side == 0)
 			wallX = vars->player->y + perpWallDist * ray_dir_y;
 		else
@@ -240,18 +266,26 @@ void	put_image(t_vars *vars)
 		wallX -= floor(wallX);
 		texX = (int)(wallX * (float)vars->tex->width);
 		if (side == 0 && ray_dir_x > 0)
-			texX = vars->tex->width = texX - 1;
-		if (side == 0 && ray_dir_y < 0)
+			texX = vars->tex->width - texX - 1;
+		if (side == 1 && ray_dir_y < 0)
 			texX = vars->tex->width - texX - 1;
 		step = 1.0 * vars->tex->height / lineHeight;
 		texPos = (drawStart - vars->screen->height / 2 + lineHeight / 2) * step;
-
+		if (side == 0)
+			if (ray_dir_x < 0)
+				side = 2;
+		if (side == 1)
+			if (ray_dir_y < 0)
+				side = 3;
+		get_tex(vars, side);
 		while(drawStart < drawEnd)
 		{
 			texY = (int)texPos & (vars->tex->height - 1);
+			color = *(unsigned int *)(vars->tex->addr + (texY * vars->tex->size_line + texX * (vars->tex->bbp / 8)));
 			texPos += step;
-
-			put_pixel(vars->img, i, drawStart, color_handler(map_x, map_y, vars, side));
+//			color = (color >> 1) + (int)(perpWallDist * 10);
+			color = get_darker_color(color, perpWallDist / 1.5);
+			put_pixel(vars->img, i, drawStart, color);
 			drawStart++;
 		}
 		i++;
@@ -435,6 +469,10 @@ int main(void)
 	vars->img->img = mlx_new_image(vars->mlx, vars->screen->width, vars->screen->height);
 	vars->img->addr = mlx_get_data_addr(vars->img->img, &vars->img->bits_per_pixel, &vars->img->size_line, &vars->img->endian);
 
+	printf("%s\n", vars->tex->n);
+	// vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->n, &vars->tex->width, &vars->tex->height);
+	// vars->tex->addr = mlx_get_data_addr(vars->tex->img, &vars->tex->bbp, &vars->tex->size_line, &vars->tex->endian);
+	printf ("w: %s e: %s s: %s n: %s\n", vars->tex->w, vars->tex->e, vars->tex->s, vars->tex->n);
 	fill_back(vars->img);
 
 	put_image(vars);

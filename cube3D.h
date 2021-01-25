@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/19 16:28:46 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/25 19:19:50 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 # define CUBE3D_H
 
-# define SPEED 0.1
-# define RSPEED 0.05
+# define SPEED 0.5
+# define RSPEED 0.1
 
 typedef struct	s_image
 {
@@ -50,6 +50,11 @@ typedef struct	s_tex
 {
 	int		width;
 	int		height;
+	void	*img;
+	void	*addr;
+	int		bbp;
+	int		size_line;
+	int		endian;
 	char	*e;
 	char	*w;
 	char	*s;
