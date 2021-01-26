@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/25 19:19:50 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/26 18:43:02 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,15 @@ typedef struct	s_tex
 	int		bbp;
 	int		size_line;
 	int		endian;
-	char	*e;
-	char	*w;
-	char	*s;
-	char	*n;
+	char	*path;
 }				t_tex;
 
+typedef struct s_sprite
+{
+	float	x;
+	float	y;
+	float	len;
+}				t_sprite;
 
 typedef struct	s_screen
 {
@@ -74,8 +77,14 @@ typedef struct	s_vars {
 	t_map		*map;
 	t_player	*player;
 	t_image		*img;
-	t_tex		*tex;
+	t_tex		*tex_e;
+	t_tex		*tex_s;
+	t_tex		*tex_n;
+	t_tex		*tex_w;
+	t_tex		*tex_floor;
+	t_tex		*tex_ceiling;
 	t_screen	*screen;
+	t_sprite	**sprites;
 }				t_vars;
 
 # include <stdlib.h>
