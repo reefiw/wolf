@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/26 18:56:28 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/27 20:48:06 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,6 +166,98 @@ t_tex	*get_tex(t_vars *vars, int side)
 	return (vars->tex_e);
 }
 
+void	put_sprites(t_vars *vars)
+{
+	t_sprite	*temp_sprite;
+	int			i;
+	int			j;
+	int			d;
+	int			stripe;
+	int			spriteScreenX;
+	int			spriteHeight;
+	int			spriteWidth;
+	int			drawStartY;
+	int			drawStartX;
+	int			drawEndX;
+	int			drawEndY;
+	int			texX;
+	int			texY;
+	double		spriteX;
+	double		spriteY;
+	double		invDet;
+	double		transformX;
+	double		transformY;
+	unsigned int	color;
+
+	i = 0;
+	while (i < vars->num_sprites)
+	{
+		vars->sprites[i]->len = (vars->player->x - vars->sprites[i]->x) * (vars->player->x - vars->sprites[i]->x)\
+		+ (vars->player->y - vars->sprites[i]->y) * (vars->player->y - vars->sprites[i]->y);
+		i++;
+	}
+	i = 0;
+	while (i < vars->num_sprites)
+	{
+		j = vars->num_sprites - 1;
+		while (j > 0)
+		{
+			if (vars->sprites[j]->len > vars->sprites[j - 1]->len)
+			{
+				temp_sprite = vars->sprites[j - 1];
+				vars->sprites[j - 1] = vars->sprites[j];
+				vars->sprites[j] =  temp_sprite;
+			}
+			j--;
+		}
+		i++;
+	}
+	i = 0;
+	while (i < vars->num_sprites)
+	{
+		spriteX = vars->sprites[i]->x - vars->player->x;
+		spriteY = vars->sprites[i]->y - vars->player->y;
+		invDet = 1.0 / (vars->player->plane_x * vars->player->dir_y - vars->player->dir_x * vars->player->plane_y);
+		transformX = invDet * (vars->player->dir_y * spriteX - vars->player->dir_x * spriteY);
+		transformY = invDet * (-vars->player->plane_y * spriteX + vars->player->plane_x * spriteY);
+		spriteScreenX = (int)((vars->screen->width / 2) * (1 + transformX / transformY));
+		spriteHeight = abs((int)(vars->screen->height / transformY));
+		drawStartY = -spriteHeight / 2 + vars->screen->height / 2;
+		if (drawStartY < 0)
+			drawStartY = 0;
+		drawEndY = spriteHeight / 2 + vars->screen->height / 2;
+		if (drawEndY >= vars->screen->height)
+			drawEndY = vars->screen->height - 1;
+		spriteWidth = abs((int)(vars->screen->height / transformY));
+		drawStartX = -spriteWidth / 2 + spriteScreenX;
+		if (drawStartX < 0)
+			drawStartX = 0;
+		drawEndX = spriteWidth / 2 + spriteScreenX;
+		if (drawEndX >= vars->screen->width)
+			drawEndX = vars->screen->width - 1;
+		stripe = drawStartX;
+		while (stripe < drawEndX)
+		{
+			texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * vars->tex_sprite->width / spriteWidth) / 256;
+			if (transformY > 0 && stripe > 0 && stripe < vars->screen->width && transformY < vars->z_buffer[stripe])
+			{
+				j = drawStartY;
+				while (j < drawEndY)
+				{
+					d = j * 256 - vars->screen->height * 128 + spriteHeight * 128;
+					texY = ((d * vars->tex_sprite->height) / spriteHeight) / 256;
+					color = *(unsigned int *)(vars->tex_sprite->addr + (texY * vars->tex_sprite->size_line + texX * (vars->tex_sprite->bbp / 8)));
+					if ((color & 0x00FFFFFF) != 0)
+						put_pixel(vars->img, stripe, j, color);
+					j++;
+				}
+			}
+			stripe++;
+		}
+		i++;
+	}
+}
+
 void	put_floor_ceiling(t_vars *vars)
 {
 	int i;
@@ -253,7 +345,6 @@ void	put_image(t_vars *vars)
 	unsigned int color;
 	t_tex	*tex;
 	put_floor_ceiling(vars);
-//	unsigned int **buffer[vars->screen->height][vars->screen->width];
 
 	i = 0;
 	while (i < vars->screen->width)
@@ -317,7 +408,6 @@ void	put_image(t_vars *vars)
 		drawEnd = lineHeight / 2 + vars->screen->height / 2;
 		drawEnd = drawEnd >= vars->screen->height ? vars->screen->height - 1 : drawEnd;
 
-//		texNum = vars->map->data[map_y][map_x] - 1;
 		if (side == 0)
 			wallX = vars->player->y + perpWallDist * ray_dir_y;
 		else
@@ -342,13 +432,14 @@ void	put_image(t_vars *vars)
 			texY = (int)texPos & (tex->height - 1);
 			color = *(unsigned int *)(tex->addr + (texY * tex->size_line + texX * (tex->bbp / 8)));
 			texPos += step;
-//			color = (color >> 1) + (int)(perpWallDist * 10);
 			color = get_darker_color(color, perpWallDist / 1.5);
 			put_pixel(vars->img, i, drawStart, color);
 			drawStart++;
 		}
+		vars->z_buffer[i] = perpWallDist;
 		i++;
 	}
+	put_sprites(vars);
 }
 
 void get_map2(int fd, t_vars *vars)
@@ -375,6 +466,7 @@ void get_map2(int fd, t_vars *vars)
 	while (buf[++i] >= '0' && buf[i] <= '9')
 		vars->screen->height = vars->screen->height * 10 + buf[i] - '0';
 	free(buf);
+	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen->width);
 	get_next_line(fd, &buf);
 	vars->tex_n->path = ft_strdup(&buf[3], 0);
 	free(buf);
@@ -444,6 +536,7 @@ void	init_sprites(t_vars *vars)
 	}
 	vars->sprites = (t_sprite **)malloc(sizeof(t_sprite *) * (len + 1));
 	vars->sprites[len] = NULL;
+	vars->num_sprites = len;
 	i = 0;
 	len = 0;
 	while (i < vars->map->height)
@@ -454,8 +547,8 @@ void	init_sprites(t_vars *vars)
 			if (vars->map->data[i][j] == '2')
 			{
 				vars->sprites[len] = (t_sprite *)malloc(sizeof(t_sprite));
-				vars->sprites[len]->x = j;
-				vars->sprites[len]->y = i;
+				vars->sprites[len]->x = j + 0.5;
+				vars->sprites[len]->y = i + 0.5;
 				vars->sprites[len]->len = 0;
 				len++;
 			}
@@ -574,14 +667,14 @@ int main(void)
 	vars->tex_n = init_tex(64, 64);
 	vars->tex_floor = init_tex(64, 64);
 	vars->tex_ceiling = init_tex(64, 64);
+	vars->tex_sprite = init_tex(64, 64);
+	vars->tex_sprite->path = "./textures/barrel.xpm";
 	vars->tex_floor->path = "./textures/mossy.xpm";
 	vars->tex_ceiling->path = "./textures/wood.xpm";
 
 	fd = open("map.cub", O_RDONLY);
 	get_map2(fd, vars);
 	init_sprites(vars);
-	printf("x: %f y: %f\n", vars->sprites[0]->x, vars->sprites[0]->y);
-//	vars->screen = new_screen(1920, 1080);
 	vars->mlx = mlx_init();
 	vars->img = new_image(NULL, NULL, 0, 0, 0);
 	vars->img->img = mlx_new_image(vars->mlx, vars->screen->width, vars->screen->height);
@@ -597,12 +690,13 @@ int main(void)
 	vars->tex_n->img = mlx_xpm_file_to_image(vars->mlx, vars->tex_n->path, &vars->tex_n->width, &vars->tex_n->height);
 	vars->tex_n->addr = mlx_get_data_addr(vars->tex_n->img, &vars->tex_n->bbp, &vars->tex_n->size_line, &vars->tex_n->endian);
 
+	vars->tex_sprite->img = mlx_xpm_file_to_image(vars->mlx, vars->tex_sprite->path, &vars->tex_sprite->width, &vars->tex_sprite->height);
+	vars->tex_sprite->addr = mlx_get_data_addr(vars->tex_sprite->img, &vars->tex_sprite->bbp, &vars->tex_sprite->size_line, &vars->tex_sprite->endian);
+
 	vars->tex_floor->img = mlx_xpm_file_to_image(vars->mlx, vars->tex_floor->path, &vars->tex_floor->width, &vars->tex_floor->height);
 	vars->tex_floor->addr = mlx_get_data_addr(vars->tex_floor->img, &vars->tex_floor->bbp, &vars->tex_floor->size_line, &vars->tex_floor->endian);
 
 	vars->tex_ceiling->img = mlx_xpm_file_to_image(vars->mlx, vars->tex_ceiling->path, &vars->tex_ceiling->width, &vars->tex_ceiling->height);
-
-//	printf("%s\n", vars->tex_ceiling->img);
 	vars->tex_ceiling->addr = mlx_get_data_addr(vars->tex_ceiling->img, &vars->tex_ceiling->bbp, &vars->tex_ceiling->size_line, &vars->tex_ceiling->endian);
 //	printf("e: %s w: %s n: %s s: %s\n", vars->tex_e->path, vars->tex_w->path, vars->tex_n->path, vars->tex_s->path);
 	// vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->n, &vars->tex->width, &vars->tex->height);

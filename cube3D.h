@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/26 18:43:02 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/27 20:20:42 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,12 @@ typedef struct	s_screen
 typedef struct	s_vars {
 	void		*mlx;
 	void		*mlx_window;
+	double		*z_buffer;
+	int			num_sprites;
 	t_map		*map;
 	t_player	*player;
 	t_image		*img;
+	t_tex		*tex_sprite;
 	t_tex		*tex_e;
 	t_tex		*tex_s;
 	t_tex		*tex_n;
