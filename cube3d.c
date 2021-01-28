@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/01/27 20:48:06 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/01/28 16:14:43 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -588,29 +588,34 @@ int key_hook(int key_code, void *param)
 {
 	float tempDir;
 	float tempPlane;
+	float dir_x;
+	float dir_y;
 	t_vars *vars;
 
+
 	vars = (t_vars *)param;
+	dir_x = vars->player->dir_x;
+	dir_y = vars->player->dir_y;
 	if (vars->player->dir_x == 1)
-		vars->player->dir_x -= 0.1;
+		dir_x -= 0.1;
 	if (vars->player->dir_y == 1)
-		vars->player->dir_y -= 0.1;
+		dir_y -= 0.1;
 	if (vars->player->dir_x == -1)
-		vars->player->dir_x += 0.1;
+		dir_x += 0.1;
 	if (vars->player->dir_y == -1)
-		vars->player->dir_y += 0.1;
+		dir_y += 0.1;
 	if (key_code == 13)
 	{
-		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x + vars->player->dir_x * SPEED)] != '1')
-			vars->player->x += vars->player->dir_x * SPEED;
-		if (vars->map->data[(int)(vars->player->y + vars->player->dir_y * SPEED)][(int)(vars->player->x)] != '1')
+		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x + dir_x * SPEED)] != '1')
+			vars->player->x += dir_x * SPEED;
+		if (vars->map->data[(int)(vars->player->y + dir_y * SPEED)][(int)(vars->player->x)] != '1')
 			vars->player->y += vars->player->dir_y * SPEED;
 	}
 	if (key_code == 1)
 	{
-		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x - vars->player->dir_x * SPEED)] != '1')
+		if (vars->map->data[(int)(vars->player->y)][(int)(vars->player->x - dir_x * SPEED)] != '1')
 			vars->player->x -= vars->player->dir_x * SPEED;
-		if (vars->map->data[(int)(vars->player->y - vars->player->dir_y * SPEED)][(int)(vars->player->x)] != '1')
+		if (vars->map->data[(int)(vars->player->y - dir_y * SPEED)][(int)(vars->player->x)] != '1')
 			vars->player->y -= vars->player->dir_y * SPEED;
 	}
 	if (key_code == 2)
@@ -672,7 +677,7 @@ int main(void)
 	vars->tex_floor->path = "./textures/mossy.xpm";
 	vars->tex_ceiling->path = "./textures/wood.xpm";
 
-	fd = open("map.cub", O_RDONLY);
+	fd = open("map.cub", O_RDONLY); 
 	get_map2(fd, vars);
 	init_sprites(vars);
 	vars->mlx = mlx_init();
@@ -698,9 +703,7 @@ int main(void)
 
 	vars->tex_ceiling->img = mlx_xpm_file_to_image(vars->mlx, vars->tex_ceiling->path, &vars->tex_ceiling->width, &vars->tex_ceiling->height);
 	vars->tex_ceiling->addr = mlx_get_data_addr(vars->tex_ceiling->img, &vars->tex_ceiling->bbp, &vars->tex_ceiling->size_line, &vars->tex_ceiling->endian);
-//	printf("e: %s w: %s n: %s s: %s\n", vars->tex_e->path, vars->tex_w->path, vars->tex_n->path, vars->tex_s->path);
-	// vars->tex->img = mlx_xpm_file_to_image(vars->mlx, vars->tex->n, &vars->tex->width, &vars->tex->height);
-	// vars->tex->addr = mlx_get_data_addr(vars->tex->img, &vars->tex->bbp, &vars->tex->size_line, &vars->tex->endian);
+
 	fill_back(vars->img);
 
 	put_image(vars);
