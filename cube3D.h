@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/09 18:54:49 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/16 17:23:07 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,6 +180,10 @@ void		put_sprites(t_vars *vars);
 void		put_floor_ceiling(t_vars *vars);
 t_tex		*get_tex(t_vars *vars, int side);
 unsigned	int get_darker_color(unsigned int color, double size);
+void		error_handler(char *str_err);
+void		error_handler_clear(char *str_err, void *bfree);
+void		main_parser(char *path, t_vars *vars);
+void		get_img_and_add(t_vars vars, t_tex *tex);
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -188,5 +192,6 @@ unsigned	int get_darker_color(unsigned int color, double size);
 # include <mlx.h>
 # include <unistd.h>
 # include "GNL/get_next_line.h"
+# include "libft/libft.h"
 
 #endif

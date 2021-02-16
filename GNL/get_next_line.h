@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 15:35:49 by plurlene          #+#    #+#             */
-/*   Updated: 2020/12/08 17:54:12 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/15 19:33:31 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@
 # include <limits.h>
 
 int		get_next_line(int fd, char **line);
-int		ft_strlen(char *str);
+int		ft_strlen1(char *str);
 int		e_l_i(char *str);
-char	*ft_strjoin(char *s1, char *s2, int bfree);
-char	*ft_strdup(char *s1, int bfree);
+char	*ft_strjoin1(char *s1, char *s2, int bfree);
+char	*ft_strdup1(char *s1, int bfree);
 
 #endif
 
