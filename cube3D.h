@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 17:23:07 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/16 18:47:10 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ typedef struct	s_vars {
 	void		*mlx_window;
 	double		*z_buffer;
 	int			num_sprites;
+	int			color_floor;
+	int			color_ceiling;
 	t_map		*map;
 	t_player	player;
 	t_image		img;

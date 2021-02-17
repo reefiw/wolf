@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 17:29:40 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/16 18:28:39 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,30 +45,8 @@ void get_map2(int fd, t_vars *vars)
 	buf = NULL;
 	buf2 = NULL;
 	get_next_line(fd, &buf);
-	i = 0;
-	if (buf[0] == 'R')
-		i = 1;
-	vars->screen.width = 0;
-	vars->screen.height= 0;
-	while (buf[++i] >= '0' && buf[i] <= '9')
-		vars->screen.width = vars->screen.width * 10 + buf[i] - '0';
-	while (buf[++i] >= '0' && buf[i] <= '9')
-		vars->screen.height = vars->screen.height * 10 + buf[i] - '0';
-	free(buf);
-	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
-	get_next_line(fd, &buf);
-	vars->tex_n.path = ft_strdup(&buf[3]);
-	free(buf);
-	get_next_line(fd, &buf);
-	vars->tex_s.path = ft_strdup(&buf[3]);
-	free(buf);
-	get_next_line(fd, &buf);
-	vars->tex_w.path = ft_strdup(&buf[3]);
-	free(buf);
-	get_next_line(fd, &buf);
-	vars->tex_e.path = ft_strdup(&buf[3]);
-	free(buf);
-	get_next_line(fd, &buf);
+	while (buf[0] != '1')
+		get_next_line(fd, &buf);
 	map = (t_map *)malloc(sizeof(t_map));
 	map->width = ft_strlen(buf);
 	map->height = 1;
@@ -159,7 +137,6 @@ int main(void)
 	t_vars		vars;
 
 	init_player(&vars);
-	vars.tex_sprite.path = "./textures/barrel.xpm";
 	vars.tex_floor.path = "./textures/mossy.xpm";
 	vars.tex_ceiling.path = "./textures/wood.xpm";
 
@@ -172,11 +149,6 @@ int main(void)
 	vars.img.img = mlx_new_image(vars.mlx, vars.screen.width, vars.screen.height);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.size_line, &vars.img.endian);
 
-	// get_img_and_add(vars, &vars.tex_e);
-	// get_img_and_add(vars, &vars.tex_s);
-	// get_img_and_add(vars, &vars.tex_w);
-	// get_img_and_add(vars, &vars.tex_n);
-	get_img_and_add(vars, &vars.tex_sprite);
 	get_img_and_add(vars, &vars.tex_ceiling);
 	get_img_and_add(vars, &vars.tex_floor);
 	fill_back(&vars.img);

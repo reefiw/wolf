@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 17:27:23 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/17 17:58:38 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ static int scip_whitespaces(char *str, int s)
 	while (str[i] == ' ')
 		i++;
 	return (i + s);
+}
+
+static int scip_digits(char *str, int flag)
+{
+	int i;
+
 }
 
 void resolution_parser(char ***temp, char *str, t_vars *vars)
@@ -51,20 +57,54 @@ void resolution_parser(char ***temp, char *str, t_vars *vars)
 	free(res_str);
 }
 
-void texture_parser(char ***temp, char *str, t_tex *tex, t_vars *vars)
+int texture_parser(char ***temp, char *str, t_tex *tex, t_vars *vars)
 {
 	int		i;
 	char	*res_str;
-	res_str = ft_strtrim(str, "");
+
+	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
 	if ((i = open(tex->path, O_RDONLY)) < 0)
 		error_handler_clear("invalid texture\n", *temp);
 	else
 		close(i);
-//	printf("CHECK: %s\n", str);
 	get_img_and_add(*vars, tex);
 	free(res_str);
+	return (1);
+}
+
+static void color_parser(char ***temp, char *str, t_vars *vars)
+{
+	int				i;
+	int				num;
+	unsigned int	color;
+	char			*res_str;
+
+	(void)temp;
+	(void)vars;
+	color = 0;
+	res_str = ft_strtrim(str, " ");
+	i = scip_whitespaces(&res_str[2], 2);
+	num = 0;
+	if (ft_isdigit(str[i]))
+		num = ft_atoi(&str[i]);
+	color = num << 16;
+	while (ft_isdigit(str[i]))
+		i++;
+	while (!ft_isdigit(str[i]))
+		i++;
+	if (ft_isdigit(str[i]))
+		num = ft_atoi(&str[i]);
+	color = color | num << 8;
+	while (ft_isdigit(str[i]))
+		i++;
+	while (!ft_isdigit(str[i]))
+		i++;
+	if (ft_isdigit(str[i]))
+		num = ft_atoi(&str[i]);
+	color = color | num;
+	vars->color_ceiling = color;
 }
 
 static int parser_case(char *str, char *str_case, int n)
@@ -74,24 +114,35 @@ static int parser_case(char *str, char *str_case, int n)
 	return (0);
 }
 
-static void parser_switch(char ***temp, char *str, t_vars *vars)
+static int parser_switch(char ***temp, char *str, t_vars *vars)
 {
-	if (parser_case(str, "R", 1))
+	int k;
+
+	k = 0;
+	if (parser_case(str, "R", 1) && (k = 1))
 		resolution_parser(temp, str, vars);
-	if (parser_case(str, "NO", 2))
+	if (parser_case(str, "NO", 2) && (k = 1))
 		texture_parser(temp, str, &vars->tex_n, vars);
-	if (parser_case(str, "SO", 2))
+	if (parser_case(str, "SO", 2) && (k = 1))
 		texture_parser(temp, str, &vars->tex_s, vars);
-	if (parser_case(str, "WE", 2))
+	if (parser_case(str, "WE", 2) && (k = 1))
 		texture_parser(temp, str, &vars->tex_w, vars);
-	if (parser_case(str, "EA", 2))
+	if (parser_case(str, "EA", 2) && (k = 1))
 		texture_parser(temp, str, &vars->tex_e, vars);
+	if (parser_case(str, "S", 1) && (k = 1))
+		texture_parser(temp, str, &vars->tex_sprite, vars);
+	if (parser_case(str, "F", 1) && (k = 1))
+		color_parser(temp, str, vars);
+	if (parser_case(str, "C", 1) && (k = 1))
+		color_parser(temp, str, vars);
 	free(str);
+	return (k);
 }
 
 void main_parser(char *path, t_vars *vars)
 {
 	int		fd;
+	int		k;
 	char	*buf;
 	char	*line;
 	char	**temp;
@@ -114,11 +165,13 @@ void main_parser(char *path, t_vars *vars)
 	free(line);
 	temp = ft_split(buf, '\n');
 	fd = -1;
+	k = 0;
 	while (temp[++fd])
 	{
-		parser_switch(&temp, ft_strtrim(temp[fd], " "), vars);
+		k += parser_switch(&temp, ft_strtrim(temp[fd], " "), vars);
 		printf("%d) %s\n", fd, temp[fd]);
 	}
-//	resolution_parser(&temp, vars);
-//	error_handler("it's the end!");
+	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
+	if (k != 8)
+		error_handler("invalid file\n");
 }
