@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 16:03:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 15:32:05 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/23 14:41:54 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,17 @@ void error_handler(char *str_err)
 	exit(1);
 }
 
-void error_handler_clear(char *str_err, void *bfree)
+void error_handler_clear(char *str_err, char **bfree)
 {
+	int i;
+
+	i = 0;
+	while (bfree[i])
+	{
+		free(bfree[i]);
+		i++;
+	}
+	free(bfree[i]);
 	free(bfree);
 	error_handler(str_err);
 }

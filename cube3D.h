@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 18:47:10 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/24 16:47:57 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@
 
 # define SPEED 0.5
 # define RSPEED 0.1
+
+typedef struct	s_map_list
+{
+	char *data;
+	void *next;
+}				t_map_list;
+
 
 typedef struct	s_image
 {
@@ -183,7 +190,7 @@ void		put_floor_ceiling(t_vars *vars);
 t_tex		*get_tex(t_vars *vars, int side);
 unsigned	int get_darker_color(unsigned int color, double size);
 void		error_handler(char *str_err);
-void		error_handler_clear(char *str_err, void *bfree);
+void		error_handler_clear(char *str_err, char **bfree);
 void		main_parser(char *path, t_vars *vars);
 void		get_img_and_add(t_vars vars, t_tex *tex);
 

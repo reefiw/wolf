@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:36 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/09 16:40:47 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/24 18:33:34 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,11 @@ void	set_minimap2(t_player player, t_image *img,\
 	while (i < map->height)
 	{
 		j = 0;
-		while (j < map->width)
+		while (map->data[i][j])
 		{
 			if (map->data[i][j] == '1')
-				draw_square(img, d, d_x + (((k / d) % map->width) * d),\
-				d_y + ((((k / d)) / map->width) * d), 0xFFFFFFF);
+				draw_square(img, d, d_x + (((k / d) % 16) * d),\
+				d_y + ((((k / d)) / 16) * d), 0xFFFFFFF);
 			k += d;
 			j++;
 		}

@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/20 20:15:53 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/24 18:39:40 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,10 @@ static void clear_str_arr(char **arr)
 	i = 0;
 	while (arr[i])
 	{
-		printf("CHECKs: %s\n", arr[i]);
 		free(arr[i]);
 		i++;
 	}
+	free(arr[i]);
 	free(arr);
 }
 
@@ -112,7 +112,7 @@ static int ft_isnum(char *str)
 		else
 			return (0);
 	}
-	return (1);
+	return (i);
 }
 
 static void check_color_str(char ***temp, char *str)
@@ -151,6 +151,7 @@ static void check_color_str(char ***temp, char *str)
 				error_handler_clear("invalid color\n", *temp);
 			}
 		}
+		clear_str_arr(colors);
 		if (i != 3 && i != 0)
 			error_handler_clear("invalid color\n", *temp);
 	}
@@ -169,27 +170,99 @@ static void color_parser(char ***temp, char *str, t_vars *vars, int *color)
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	num = 0;
-	if (ft_isdigit(str[i]))
-		num = ft_atoi(&str[i]);
+	if (ft_isdigit(res_str[i]))
+		num = ft_atoi(&res_str[i]);
 	if (num > 255)
 		error_handler_clear("invalid color\n", *temp);
 	*color = num << 16;
-	i = scip_digits(&str[i], 1, i);
-	i = scip_digits(&str[i], 0, i);
-	if (ft_isdigit(str[i]))
-		num = ft_atoi(&str[i]);
+	i = scip_digits(&res_str[i], 1, i);
+	i = scip_digits(&res_str[i], 0, i);
+	if (ft_isdigit(res_str[i]))
+		num = ft_atoi(&res_str[i]);
 	if (num > 255)
 		error_handler_clear("invalid color\n", *temp);
 	*color = *color | num << 8;
-	i = scip_digits(&str[i], 1, i);
-	i = scip_digits(&str[i], 0, i);
-	if (ft_isdigit(str[i]))
-		num = ft_atoi(&str[i]);
+	i = scip_digits(&res_str[i], 1, i);
+	i = scip_digits(&res_str[i], 0, i);
+	if (ft_isdigit(res_str[i]))
+		num = ft_atoi(&res_str[i]);
 	if (num > 255)
 		error_handler_clear("invalid color\n", *temp);
 	*color = *color | num;
 	free(res_str);
 }
+
+// static void check_first_last_line(char *str, char ***temp)
+// {
+// 	int		i;
+// 	char	*temp_str;
+
+// 	temp_str = ft_strtrim(str, " ");
+// 	i = 0;
+// 	while (temp_str[i])
+// 	{
+// 		if (temp_str[i] != '1' && temp_str[i] != ' ')
+// 			error_handler_clear("invalid map\n", *temp);
+// 		i++;
+// 	}
+// 	free(temp_str);
+// }
+
+// static void check_middle_line(char *str, char ***temp)
+// {
+// 	int i;
+// 	char *temp_str;
+
+// 	temp_str = ft_strtrim(str, " ");
+// 	i = ft_strlen1(temp_str);
+// 	free(temp_str);
+// 	if (temp_str[0] != '1' || temp_str[i - 1] != '1')
+// 		error_handler_clear("invalid map\n", *temp);
+// }
+
+// static void map_parser(char ***temp, char **arr, t_vars *vars)
+// {
+// 	(void)temp;
+// 	(void)vars;
+
+// 	int			i;
+// 	int			j;
+// 	int			len;
+// 	t_map		*map;
+
+// 	check_first_last_line(arr[0], temp);
+// 	len = 0;
+// 	while (arr[len])
+// 		len++;
+// 	// ЗАПРОТЕКТИ ВСЕ МАЛЛОКИ ЗАЕБАЛ
+// 	map = (t_map *)malloc(sizeof(t_map));
+// 	map->data = (char **)malloc(sizeof(char *) * len);
+// 	map->data[0] = arr[0];
+// 	check_first_last_line(arr[len - 1], temp);
+// 	map->data[len - 1] = arr[len - 1];
+// 	i = 1;
+// 	while(i < len - 1)
+// 	{
+// 		map->data[i] = arr[i];
+// 		j = 1;
+// 		while(map->data[i][j + 1])
+// 		{
+// 			if (ft_strchr("02NSWE", map->data[i][j]))
+// 			{
+// 				if (arr[i - 1][j] == ' ' || arr[i][j - 1] == ' ' || arr[i + 1][j] == ' ' || arr[i][j + 1] == ' ' || arr[i - 1][j - 1] == ' ' || arr[i + 1][j - 1] == ' ')
+// 					error_handler_clear("invalid map\n", *temp);
+// 				if ((ft_strlen1(arr[i - 1]) > j && arr[i - 1][j + 1] == ' ') || (ft_strlen1(arr[i + 1]) > j && arr[i + 1][j + 1] == ' '))
+// 					error_handler_clear("invalid map\n", *temp);
+// 			}
+// 			j++;
+// 		}
+// 		check_middle_line(map->data[i], temp);
+// 		i++;
+// 	}
+// 	i = -1;
+// 	while (++i < len)
+// 		printf("%s\n", map->data[i]);
+// }
 
 static int parser_case(char *str, char *str_case, int n)
 {
@@ -219,42 +292,96 @@ static int parser_switch(char ***temp, char *str, t_vars *vars)
 		color_parser(temp, str, vars, &vars->color_floor);
 	if (parser_case(str, "C", 1) && (k = 1))
 		color_parser(temp, str, vars, &vars->color_ceiling);
-	free(str);
 	return (k);
+}
+
+static void add_line(char ***arr, char *line)
+{
+	int		len;;
+	char	**result_arr;
+
+	len = 0;
+	while ((*arr)[len] != NULL)
+		len++;
+	result_arr = (char **)malloc(sizeof(char *) * (len + 2));
+	result_arr[len + 1] = NULL;
+	result_arr[len] = ft_strdup1(line, 1);
+	while (--len >= 0)
+		result_arr[len] = ft_strdup1((*arr)[len], 1);
+	free(*arr);
+	*arr = result_arr;
+	len = 0;
+}
+
+static char **get_map(int fd, char *first_line)
+{
+	char *line;
+	char **result_arr;
+
+	result_arr = (char **)malloc(sizeof(char *) * 2);
+	result_arr[1] = NULL;
+	result_arr[0] = ft_strdup1(first_line, 1);
+	while (get_next_line(fd, &line))
+		add_line(&result_arr, line);
+	return (result_arr);
+}
+
+static char **get_head(int fd, t_vars *vars)
+{
+	char	*buf;
+	char	*line;
+	char	**temp;
+	int		k;
+
+	line = NULL;
+	buf = (char *)malloc(1);
+	buf[0] = '\0';
+	while (get_next_line(fd, &line))
+	{
+		k = scip_whitespaces(line, 0);
+		if (ft_strchr("012", line[k]))
+			break;
+		buf = ft_strjoin1(buf, "\n", 1);
+		buf = ft_strjoin1(buf, line, 1);
+		free(line);
+	}
+	vars->map->data = get_map(fd, line);
+	temp = ft_split(buf, '\n');
+	free(buf);
+	return (temp);
 }
 
 void main_parser(char *path, t_vars *vars)
 {
 	int		fd;
 	int		k;
-	char	*buf;
-	char	*line;
 	char	**temp;
 
-	(void)path;
-	(void)vars;
 	if (ft_strncmp(&path[ft_strlen(path) - 4], ".cub", 4))
 		error_handler("invalid extension\n");
 	if	((fd = open(path, O_RDONLY)) < 1)
 		error_handler("can't open file\n");
-	line = NULL;
-	buf = (char *)malloc(1);
-	buf[0] = '\0';
-	while (get_next_line(fd, &line))
+	vars->map = (t_map *)malloc(sizeof(t_map));
+	temp = get_head(fd, vars);
+	close(fd);
+	k = 0;
+	while (vars->map->data[k])
 	{
-		buf = ft_strjoin1(buf, "\n", 1);
-		buf = ft_strjoin1(buf, line, 1);
-		free(line);
+		if (vars->map->data[k][0] == '\0')
+			error_handler_clear("invalid map\n", temp);
+		k++;
 	}
-	free(line);
-	temp = ft_split(buf, '\n');
+	vars->map->height = k;
 	fd = -1;
 	k = 0;
 	while (temp[++fd])
 	{
-		k += parser_switch(&temp, ft_strtrim(temp[fd], " "), vars);
+		k += parser_switch(&temp, temp[fd], vars);
 		printf("%d) %s\n", fd, temp[fd]);
+		if (k == 8)
+			break ;
 	}
+	free(temp);
 	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
 	if (k != 8)
 		error_handler("invalid file\n");
