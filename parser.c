@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/24 18:39:40 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/24 19:32:13 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,77 +192,19 @@ static void color_parser(char ***temp, char *str, t_vars *vars, int *color)
 	free(res_str);
 }
 
-// static void check_first_last_line(char *str, char ***temp)
-// {
-// 	int		i;
-// 	char	*temp_str;
+static void check_middle_line(char *str, char ***temp)
+{
+	int i;
+	char *temp_str;
 
-// 	temp_str = ft_strtrim(str, " ");
-// 	i = 0;
-// 	while (temp_str[i])
-// 	{
-// 		if (temp_str[i] != '1' && temp_str[i] != ' ')
-// 			error_handler_clear("invalid map\n", *temp);
-// 		i++;
-// 	}
-// 	free(temp_str);
-// }
-
-// static void check_middle_line(char *str, char ***temp)
-// {
-// 	int i;
-// 	char *temp_str;
-
-// 	temp_str = ft_strtrim(str, " ");
-// 	i = ft_strlen1(temp_str);
-// 	free(temp_str);
-// 	if (temp_str[0] != '1' || temp_str[i - 1] != '1')
-// 		error_handler_clear("invalid map\n", *temp);
-// }
-
-// static void map_parser(char ***temp, char **arr, t_vars *vars)
-// {
-// 	(void)temp;
-// 	(void)vars;
-
-// 	int			i;
-// 	int			j;
-// 	int			len;
-// 	t_map		*map;
-
-// 	check_first_last_line(arr[0], temp);
-// 	len = 0;
-// 	while (arr[len])
-// 		len++;
-// 	// ЗАПРОТЕКТИ ВСЕ МАЛЛОКИ ЗАЕБАЛ
-// 	map = (t_map *)malloc(sizeof(t_map));
-// 	map->data = (char **)malloc(sizeof(char *) * len);
-// 	map->data[0] = arr[0];
-// 	check_first_last_line(arr[len - 1], temp);
-// 	map->data[len - 1] = arr[len - 1];
-// 	i = 1;
-// 	while(i < len - 1)
-// 	{
-// 		map->data[i] = arr[i];
-// 		j = 1;
-// 		while(map->data[i][j + 1])
-// 		{
-// 			if (ft_strchr("02NSWE", map->data[i][j]))
-// 			{
-// 				if (arr[i - 1][j] == ' ' || arr[i][j - 1] == ' ' || arr[i + 1][j] == ' ' || arr[i][j + 1] == ' ' || arr[i - 1][j - 1] == ' ' || arr[i + 1][j - 1] == ' ')
-// 					error_handler_clear("invalid map\n", *temp);
-// 				if ((ft_strlen1(arr[i - 1]) > j && arr[i - 1][j + 1] == ' ') || (ft_strlen1(arr[i + 1]) > j && arr[i + 1][j + 1] == ' '))
-// 					error_handler_clear("invalid map\n", *temp);
-// 			}
-// 			j++;
-// 		}
-// 		check_middle_line(map->data[i], temp);
-// 		i++;
-// 	}
-// 	i = -1;
-// 	while (++i < len)
-// 		printf("%s\n", map->data[i]);
-// }
+	temp_str = ft_strtrim(str, " ");
+	i = ft_strlen1(temp_str);
+	free(temp_str);
+	if (temp_str[0] == '\0')
+		return ;
+	if (temp_str[0] != '1' || temp_str[i - 1] != '1')
+		error_handler_clear("invalid map\n", *temp);
+}
 
 static int parser_case(char *str, char *str_case, int n)
 {
@@ -351,6 +293,31 @@ static char **get_head(int fd, t_vars *vars)
 	return (temp);
 }
 
+static void check_map(char ***temp, t_vars *vars)
+{
+	int i;
+	int j;
+
+	i = 0;
+	while (vars->map->data[i + 1])
+	{
+		j = 0;
+		while (vars->map->data[i][j + 1])
+		{
+			if (ft_strchr("02NSWE", vars->map->data[i][j]))
+			{
+				if (vars->map->data[i - 1][j] == ' ' || vars->map->data[i][j - 1] == ' ' || vars->map->data[i + 1][j] == ' ' || vars->map->data[i][j + 1] == ' ' || vars->map->data[i - 1][j - 1] == ' ' || vars->map->data[i + 1][j - 1] == ' ')
+					error_handler_clear("invalid map\n", *temp);
+				if ((ft_strlen1(vars->map->data[i - 1]) > j && vars->map->data[i - 1][j + 1] == ' ') || (ft_strlen1(vars->map->data[i + 1]) > j && vars->map->data[i + 1][j + 1] == ' '))
+					error_handler_clear("invalid map\n", *temp);
+			}
+			j++;
+		}
+		i++;
+		check_middle_line(vars->map->data[i], temp);
+	}
+}
+
 void main_parser(char *path, t_vars *vars)
 {
 	int		fd;
@@ -371,6 +338,7 @@ void main_parser(char *path, t_vars *vars)
 			error_handler_clear("invalid map\n", temp);
 		k++;
 	}
+	check_map(&temp, vars);
 	vars->map->height = k;
 	fd = -1;
 	k = 0;
