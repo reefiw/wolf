@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/24 19:32:13 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/25 19:46:51 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,6 +268,91 @@ static char **get_map(int fd, char *first_line)
 	return (result_arr);
 }
 
+static void init_sprites(t_vars *vars)
+{
+	int i;
+	int j;
+	int num_sprites;
+
+	num_sprites = 0;
+	i = -1;
+	while (vars->map->data[++i])
+	{
+		j = -1;
+		while (vars->map->data[i][++j])
+			if (vars->map->data[i][j] == '2')
+				num_sprites++;
+	}
+	vars->sprites = (t_sprite **)malloc(sizeof(t_sprite *) * (num_sprites + 1));
+	vars->sprites[num_sprites] = NULL;
+	vars->num_sprites = num_sprites;
+	i = -1;
+	num_sprites = 0;
+	while (vars->map->data[++i])
+	{
+		j = -1;
+		while (vars->map->data[i][++j])
+			if (vars->map->data[i][j] == '2')
+			{
+				vars->sprites[num_sprites] = (t_sprite *)malloc(sizeof(t_sprite));
+				vars->sprites[num_sprites]->x = j + 0.5;
+				vars->sprites[num_sprites]->y = i + 0.5;
+				vars->sprites[num_sprites]->len = 0;
+				num_sprites++;
+			}
+	}
+}
+
+static void player_case(char s, t_player *player)
+{
+	player->dir_x = 1;
+	player->dir_y = 0;
+	player->plane_x = 0;
+	player->plane_y = 0.66;
+	if (s == 'E')
+	{
+		player->dir_x = 1;
+		player->dir_y = 0;
+		player->plane_x = 0;
+		player->plane_y = 0.66;
+	}
+	if (s == 'W')
+	{
+		player->dir_x = 1;
+		player->dir_y = 0;
+		player->plane_x = 0;
+		player->plane_y = 0.66;
+	}
+	if (s == 'S')
+	{
+		player->dir_x = 1;
+		player->dir_y = 0;
+		player->plane_x = 0;
+		player->plane_y = 0.66;
+	}
+}
+
+static void parse_player(t_vars *vars)
+{
+	int i;
+	int j;
+
+	i = -1;
+	while (vars->map->data[++i])
+	{
+		j = -1;
+		while (vars->map->data[i][++j])
+		{
+			if (ft_strchr("NSWE", vars->map->data[i][j]))
+			{
+				vars->player.x = j + 0.5;
+				vars->player.y = i + 0.5;
+				player_case(vars->map->data[i][j], &vars->player);
+			}
+		}
+	}
+}
+
 static char **get_head(int fd, t_vars *vars)
 {
 	char	*buf;
@@ -330,6 +415,8 @@ void main_parser(char *path, t_vars *vars)
 		error_handler("can't open file\n");
 	vars->map = (t_map *)malloc(sizeof(t_map));
 	temp = get_head(fd, vars);
+	init_sprites(vars);
+	parse_player(vars);
 	close(fd);
 	k = 0;
 	while (vars->map->data[k])

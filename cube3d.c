@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/24 16:40:42 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/02/25 19:41:33 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ int main(void)
 	int			fd;
 	t_vars		vars;
 
-	init_player(&vars);
+//	init_player(&vars);
 	vars.tex_floor.path = "./textures/mossy.xpm";
 	vars.tex_ceiling.path = "./textures/wood.xpm";
 
@@ -144,7 +144,7 @@ int main(void)
 	vars.mlx = mlx_init();
 	get_map2(fd, &vars);
 	main_parser("map.cub", &vars);
-	init_sprites(&vars);
+//	init_sprites(&vars);
 	new_image(&vars);
 	vars.img.img = mlx_new_image(vars.mlx, vars.screen.width, vars.screen.height);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.size_line, &vars.img.endian);
