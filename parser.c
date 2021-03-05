@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/25 19:46:51 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/05 17:38:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,20 +192,6 @@ static void color_parser(char ***temp, char *str, t_vars *vars, int *color)
 	free(res_str);
 }
 
-static void check_middle_line(char *str, char ***temp)
-{
-	int i;
-	char *temp_str;
-
-	temp_str = ft_strtrim(str, " ");
-	i = ft_strlen1(temp_str);
-	free(temp_str);
-	if (temp_str[0] == '\0')
-		return ;
-	if (temp_str[0] != '1' || temp_str[i - 1] != '1')
-		error_handler_clear("invalid map\n", *temp);
-}
-
 static int parser_case(char *str, char *str_case, int n)
 {
 	if (ft_strnstr(str, str_case, n))
@@ -372,6 +358,12 @@ static char **get_head(int fd, t_vars *vars)
 		buf = ft_strjoin1(buf, line, 1);
 		free(line);
 	}
+	if (!ft_strchr("012", line[k]))
+	{
+		free(line);
+		free(buf);
+		error_handler("invalid map\n");
+	}
 	vars->map->data = get_map(fd, line);
 	temp = ft_split(buf, '\n');
 	free(buf);
@@ -383,24 +375,27 @@ static void check_map(char ***temp, t_vars *vars)
 	int i;
 	int j;
 
+	// i = -1;
+	// while (vars->map->data[++i])
+	// 	printf("%s\n", vars->map->data[i]);
 	i = 0;
-	while (vars->map->data[i + 1])
+	while (vars->map->data[i])
 	{
 		j = 0;
-		while (vars->map->data[i][j + 1])
+		while (vars->map->data[i][j])
 		{
 			if (ft_strchr("02NSWE", vars->map->data[i][j]))
 			{
-				if (vars->map->data[i - 1][j] == ' ' || vars->map->data[i][j - 1] == ' ' || vars->map->data[i + 1][j] == ' ' || vars->map->data[i][j + 1] == ' ' || vars->map->data[i - 1][j - 1] == ' ' || vars->map->data[i + 1][j - 1] == ' ')
-					error_handler_clear("invalid map\n", *temp);
-				if ((ft_strlen1(vars->map->data[i - 1]) > j && vars->map->data[i - 1][j + 1] == ' ') || (ft_strlen1(vars->map->data[i + 1]) > j && vars->map->data[i + 1][j + 1] == ' '))
+				if (i == 0 || j == 0 || !vars->map->data[i + 1] || !vars->map->data[i][j + 1] || ft_strlen1(vars->map->data[i - 1]) <= j || ft_strlen1(vars->map->data[i + 1]) <= j)
 					error_handler_clear("invalid map\n", *temp);
 			}
+			else if (!ft_strchr("1 ", vars->map->data[i][j]))
+				error_handler_clear("invalid map\n", *temp);
 			j++;
 		}
 		i++;
-		check_middle_line(vars->map->data[i], temp);
 	}
+	// printf("CHECK!\n");
 }
 
 void main_parser(char *path, t_vars *vars)
@@ -421,8 +416,8 @@ void main_parser(char *path, t_vars *vars)
 	k = 0;
 	while (vars->map->data[k])
 	{
-		if (vars->map->data[k][0] == '\0')
-			error_handler_clear("invalid map\n", temp);
+		// if (vars->map->data[k][0] == '\0')
+		// 	error_handler_clear("invalid map\n", temp);
 		k++;
 	}
 	check_map(&temp, vars);

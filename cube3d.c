@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/25 19:41:33 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/05 17:48:47 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,54 +32,6 @@ t_tex	*get_tex(t_vars *vars, int side)
 	if (side == 3)
 		return (&vars->tex_e);
 	return (&vars->tex_e);
-}
-
-void get_map2(int fd, t_vars *vars)
-{
-	t_map	*map;
-	char *buf;
-	char *buf2;
-	int i;
-	int j;
-
-	buf = NULL;
-	buf2 = NULL;
-	get_next_line(fd, &buf);
-	while (buf[0] != '1')
-		get_next_line(fd, &buf);
-	map = (t_map *)malloc(sizeof(t_map));
-	map->width = ft_strlen(buf);
-	map->height = 1;
-	while (get_next_line(fd, &buf2))
-	{
-		buf = ft_strjoin1(buf, buf2, 1);
-		map->height++;
-		free(buf2);
-	}
-	map->data = (char **)malloc(sizeof(char *) * map->height + 1);
-	map->data[map->height] = 0;
-	i = 0;
-	j = 0;
-	while (i < map->height)
-	{
-		map->data[i] = (char *)malloc(map->width + 1);
-		while (j < map->width)
-		{
-			map->data[i][j] = *(buf++);
-			j++;
-		}
-		map->data[i][j] = 0;
-		j = 0;
-		i++;
-	}
-	i = i * map->width;
-	while (i-- > 0)
-		buf--;
-	if (buf2)
-		free(buf2);
-	if (buf)
-		free(buf);
-	vars->map = map;
 }
 
 void	init_sprites(t_vars *vars)
@@ -142,17 +94,16 @@ int main(void)
 
 	fd = open("map.cub", O_RDONLY);
 	vars.mlx = mlx_init();
-	get_map2(fd, &vars);
 	main_parser("map.cub", &vars);
 //	init_sprites(&vars);
 	new_image(&vars);
+	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	vars.img.img = mlx_new_image(vars.mlx, vars.screen.width, vars.screen.height);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.size_line, &vars.img.endian);
-
 	get_img_and_add(vars, &vars.tex_ceiling);
 	get_img_and_add(vars, &vars.tex_floor);
 	fill_back(&vars.img);
-
+	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	put_image(&vars);
 	set_minimap2(vars.player, &vars.img, vars.map, 1320, 580);
 	vars.mlx_window = mlx_new_window(vars.mlx, vars.screen.width, vars.screen.height, "cube3D");
