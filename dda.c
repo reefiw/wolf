@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:20:39 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/16 18:25:22 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:26:19 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void		put_image(t_vars *vars)
 {
 	t_dda t;
 
+//	fill_back(&vars->img, vars);
 	put_floor_ceiling(vars);
 	t.i = 0;
 	while (t.i < vars->screen.width)

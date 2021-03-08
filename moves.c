@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/25 19:24:08 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:22:28 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,5 @@ int			key_hook(int key_code, void *param)
 	move_up_down(key_code, vars, dir_x, dir_y);
 	move_left_right(key_code, vars);
 	rotation_left_right(key_code, vars);
-	printf("dirx: %f diry: %f planex %f planey: %f\n", vars->player.dir_x, vars->player.dir_y, vars->player.plane_x, vars->player.plane_y);
-	fill_back(&vars->img);
-	put_image(vars);
-	set_minimap2(vars->player, &vars->img, vars->map, 1320, 580);
-	mlx_clear_window(vars->mlx, vars->mlx_window);
-	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img.img, 0, 0);
 	return (1);
 }

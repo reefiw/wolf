@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/05 17:38:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 18:25:09 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,9 +375,9 @@ static void check_map(char ***temp, t_vars *vars)
 	int i;
 	int j;
 
-	// i = -1;
-	// while (vars->map->data[++i])
-	// 	printf("%s\n", vars->map->data[i]);
+	i = -1;
+	while (vars->map->data[++i])
+		printf("%d) res: %d str: \"%s\"\n", i, !ft_strchr("012NSWE ", vars->map->data[i][0]),  vars->map->data[i]);
 	i = 0;
 	while (vars->map->data[i])
 	{
@@ -393,9 +393,10 @@ static void check_map(char ***temp, t_vars *vars)
 				error_handler_clear("invalid map\n", *temp);
 			j++;
 		}
+		if (vars->map->data[i + 1] && !j)
+			error_handler_clear("invalid map\n", *temp);
 		i++;
 	}
-	// printf("CHECK!\n");
 }
 
 void main_parser(char *path, t_vars *vars)
@@ -415,11 +416,7 @@ void main_parser(char *path, t_vars *vars)
 	close(fd);
 	k = 0;
 	while (vars->map->data[k])
-	{
-		// if (vars->map->data[k][0] == '\0')
-		// 	error_handler_clear("invalid map\n", temp);
 		k++;
-	}
 	check_map(&temp, vars);
 	vars->map->height = k;
 	fd = -1;

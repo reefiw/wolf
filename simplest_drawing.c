@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:36 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/24 18:33:34 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:20:03 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,20 +34,20 @@ void	draw_square(t_image *img, int width, int x, int y, int color)
 	}
 }
 
-void	fill_back(t_image *img)
+void	fill_back(t_image *img, t_vars *vars)
 {
 	int i;
 	int j;
 
 	j = -1;
-	while (++j < 1920)
+	while (++j < vars->screen.width)
 	{
 		i = -1;
-		while (++i < 1080 / 2)
-			put_pixel(img, j, i, 0x8FFF0000);
-		while (i < 1080)
+		while (++i < vars->screen.height / 2)
+			put_pixel(img, j, i, vars->color_ceiling);
+		while (i < vars->screen.height)
 		{
-			put_pixel(img, j, i, 0xAFFFFFFF);
+			put_pixel(img, j, i, vars->color_floor);
 			i++;
 		}
 	}

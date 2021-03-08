@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/25 19:41:33 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:25:39 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ typedef struct	s_floor_ceiling
 
 
 int			key_hook(int key_code, void *param);
-void		fill_back(t_image *img);
+void		fill_back(t_image *img, t_vars *vars);
 void		put_image(t_vars *vars);
 void		set_minimap2(t_player player, t_image *img, t_map *map, int d_x, int d_y);
 void		new_image(t_vars *vars);
@@ -183,7 +183,6 @@ void		init_player(t_vars *vars);
 void		init_tex(t_tex *tex, int width, int height);
 void		put_pixel(t_image *img, int x, int y, int color);
 void		draw_square(t_image *img, int width, int x, int y, int color);
-void		fill_back(t_image *img);
 void		set_minimap2(t_player player, t_image *img, t_map *map, int d_x, int d_y);
 void		put_sprites(t_vars *vars);
 void		put_floor_ceiling(t_vars *vars);

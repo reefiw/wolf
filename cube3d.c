@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/05 17:48:47 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/08 20:24:07 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,31 +83,41 @@ void get_img_and_add(t_vars vars, t_tex *tex)
 	tex->addr = mlx_get_data_addr(tex->img, &tex->bbp, &tex->size_line, &tex->endian);
 }
 
+int nothing(t_vars *vars)
+{
+	mlx_do_sync(vars->mlx);
+	put_image(vars);
+	set_minimap2(vars->player, &vars->img, vars->map, 1320, 580);
+	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img.img, 0, 0);
+	return (0);
+}
+
 int main(void)
 {
 	int			fd;
 	t_vars		vars;
 
-//	init_player(&vars);
 	vars.tex_floor.path = "./textures/mossy.xpm";
 	vars.tex_ceiling.path = "./textures/wood.xpm";
 
 	fd = open("map.cub", O_RDONLY);
+	vars.screen.width = 1;
+	vars.screen.height = 1;
 	vars.mlx = mlx_init();
 	main_parser("map.cub", &vars);
-//	init_sprites(&vars);
 	new_image(&vars);
 	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	vars.img.img = mlx_new_image(vars.mlx, vars.screen.width, vars.screen.height);
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.size_line, &vars.img.endian);
 	get_img_and_add(vars, &vars.tex_ceiling);
 	get_img_and_add(vars, &vars.tex_floor);
-	fill_back(&vars.img);
+//	fill_back(&vars.img, &vars);
 	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	put_image(&vars);
 	set_minimap2(vars.player, &vars.img, vars.map, 1320, 580);
 	vars.mlx_window = mlx_new_window(vars.mlx, vars.screen.width, vars.screen.height, "cube3D");
 	mlx_put_image_to_window(vars.mlx, vars.mlx_window, vars.img.img, 0, 0);
 	mlx_hook(vars.mlx_window, 2, 1L<<0, key_hook, &vars);
+	mlx_loop_hook(vars.mlx, nothing, &vars);
 	mlx_loop(vars.mlx);
 }
