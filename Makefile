@@ -1,9 +1,9 @@
 NAME=cub3D
 SRCS = cube3d.c GNL/get_next_line.c GNL/get_next_line_utils.c dda.c inits.c moves.c draw_sprites.c error_handler.c \
-		floor_ceiling.c ft_substr.c parser.c simplest_drawing.c
+		floor_ceiling.c ft_substr.c parser.c simplest_drawing.c screenshot.c
 OBJS = $(SRCS:.c=.o)
 LIBS = libft.a libmlx.dylib
-INCLUDES = cub3D.h
+INCLUDES = cube3D.h
 all: $(SRCS) $(NAME)
 $(NAME): $(OBJS)
 	make -C libft/ bonus
@@ -12,7 +12,7 @@ $(NAME): $(OBJS)
 	cp minilibx/libmlx.dylib .
 	gcc -framework OpenGL -framework AppKit -o $(NAME) $(OBJS) $(LIBS)
 .c.o:
-	gcc -Iminilibx -Ilibft -c $< -o $@
+	gcc -Iminilibx -Ilibft -I$(INCLUDES) -c $< -o $@
 clean:
 	make -C libft/ fclean
 	make -C minilibx/ clean

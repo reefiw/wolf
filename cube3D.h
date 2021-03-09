@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/08 20:25:39 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/09 15:45:52 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct	s_image
 	void	*img;
 	char	*addr;
 	int		bits_per_pixel;
+	int		bytes_pp;
 	int		size_line;
 	int		endian;
 }				t_image;
@@ -192,6 +193,7 @@ void		error_handler(char *str_err);
 void		error_handler_clear(char *str_err, char **bfree);
 void		main_parser(char *path, t_vars *vars);
 void		get_img_and_add(t_vars vars, t_tex *tex);
+void		do_screenshot(t_vars *vars);
 
 # include <stdlib.h>
 # include <unistd.h>

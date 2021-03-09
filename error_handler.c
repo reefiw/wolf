@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 16:03:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/08 18:24:19 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/09 17:14:53 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static void print_header()
 {
-	write(2, "Error\n", 7);
+	write(1, "Error\n", 7);
 }
 
 void error_handler(char *str_err)
@@ -24,8 +24,8 @@ void error_handler(char *str_err)
 	print_header();
 	i = -1;
 	while (str_err[++i])
-		write(2, &str_err[i], 1);
-	exit(1);
+		write(1, &str_err[i], 1);
+	exit(0);
 }
 
 void error_handler_clear(char *str_err, char **bfree)

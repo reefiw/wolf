@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/08 20:24:07 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/09 18:36:13 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,19 +92,19 @@ int nothing(t_vars *vars)
 	return (0);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
 	int			fd;
 	t_vars		vars;
 
 	vars.tex_floor.path = "./textures/mossy.xpm";
 	vars.tex_ceiling.path = "./textures/wood.xpm";
-
-	fd = open("map.cub", O_RDONLY);
+	if (argc < 2 || argc > 3)
+		error_handler("Incorrect arguments");
 	vars.screen.width = 1;
 	vars.screen.height = 1;
 	vars.mlx = mlx_init();
-	main_parser("map.cub", &vars);
+	main_parser(argv[1], &vars);
 	new_image(&vars);
 	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	vars.img.img = mlx_new_image(vars.mlx, vars.screen.width, vars.screen.height);
@@ -115,6 +115,12 @@ int main(void)
 	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	put_image(&vars);
 	set_minimap2(vars.player, &vars.img, vars.map, 1320, 580);
+	if (argc == 3)
+	{
+		if (ft_strnstr("--save", argv[2], 6))
+			do_screenshot(&vars);
+		else error_handler("Incorrect arguments");
+	}
 	vars.mlx_window = mlx_new_window(vars.mlx, vars.screen.width, vars.screen.height, "cube3D");
 	mlx_put_image_to_window(vars.mlx, vars.mlx_window, vars.img.img, 0, 0);
 	mlx_hook(vars.mlx_window, 2, 1L<<0, key_hook, &vars);
