@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/09 18:42:01 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/09 19:16:50 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,10 +77,10 @@ int texture_parser(char ***temp, char *str, t_tex *tex, t_vars *vars)
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
-	// if ((i = open(tex->path, O_RDONLY)) < 0)
-	// 	error_handler_clear("invalid texture\n", *temp);
-	// else
-	// 	close(i);
+	if ((i = open(tex->path, O_RDONLY)) < 0)
+		error_handler_clear("invalid texture\n", *temp);
+	else
+		close(i);
 	get_img_and_add(*vars, tex);
 	if (!tex->img || !tex->addr)
 		error_handler_clear("invalid texture\n", *temp);
@@ -221,21 +221,21 @@ static int parser_switch(char ***temp, char *str, t_vars *vars)
 	int k;
 
 	k = 0;
-	if (parser_case(str, "R ", 1) && (k = 1))
+	if (parser_case(str, "R ", 2) && (++k))
 		resolution_parser(temp, str, vars);
-	if (parser_case(str, "NO ", 2) && (k = 1))
+	if (parser_case(str, "NO ", 3) && (++k))
 		texture_parser(temp, str, &vars->tex_n, vars);
-	if (parser_case(str, "SO ", 2) && (k = 1))
+	if (parser_case(str, "SO ", 3) && (++k))
 		texture_parser(temp, str, &vars->tex_s, vars);
-	if (parser_case(str, "WE ", 2) && (k = 1))
+	if (parser_case(str, "WE ", 3) && (++k))
 		texture_parser(temp, str, &vars->tex_w, vars);
-	if (parser_case(str, "EA ", 2) && (k = 1))
+	if (parser_case(str, "EA ", 3) && (++k))
 		texture_parser(temp, str, &vars->tex_e, vars);
-	if (parser_case(str, "S ", 1) && (k = 1))
+	if (parser_case(str, "S ", 2) && (++k))
 		texture_parser(temp, str, &vars->tex_sprite, vars);
-	if (parser_case(str, "F ", 1) && (k = 1))
+	if (parser_case(str, "F ", 2) && (++k))
 		color_parser(temp, str, vars, &vars->color_floor);
-	if (parser_case(str, "C ", 1) && (k = 1))
+	if (parser_case(str, "C ", 2) && (++k))
 		color_parser(temp, str, vars, &vars->color_ceiling);
 	return (k);
 }

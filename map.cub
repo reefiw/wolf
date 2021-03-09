@@ -1,6 +1,5 @@
 R 100 720
-EA ./textures/greystone.xpm
-EA ./textures/greystone.xpm
+EA ./woolftex/greystone.xpm
 NO ./textures/redbrick.xpm
 SO ./textures/wood.xpm
 WE ./textures/wood.xpm

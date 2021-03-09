@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/09 18:36:13 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/09 19:11:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,49 +34,6 @@ t_tex	*get_tex(t_vars *vars, int side)
 	return (&vars->tex_e);
 }
 
-void	init_sprites(t_vars *vars)
-{
-	int i;
-	int j;
-	int len;
-
-	i = 0;
-	len = 0;
-	while (i < vars->map->height)
-	{
-		j = 0;
-		while (j < vars->map->width)
-		{
-			if (vars->map->data[i][j] == '2')
-				len++;
-			j++;
-		}
-		i++;
-	}
-	vars->sprites = (t_sprite **)malloc(sizeof(t_sprite *) * (len + 1));
-	vars->sprites[len] = NULL;
-	vars->num_sprites = len;
-	i = 0;
-	len = 0;
-	while (i < vars->map->height)
-	{
-		j = 0;
-		while (j < vars->map->width)
-		{
-			if (vars->map->data[i][j] == '2')
-			{
-				vars->sprites[len] = (t_sprite *)malloc(sizeof(t_sprite));
-				vars->sprites[len]->x = j + 0.5;
-				vars->sprites[len]->y = i + 0.5;
-				vars->sprites[len]->len = 0;
-				len++;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
 void get_img_and_add(t_vars vars, t_tex *tex)
 {
 	tex->img = mlx_xpm_file_to_image(vars.mlx, tex->path, &tex->width, &tex->height);
@@ -87,7 +44,7 @@ int nothing(t_vars *vars)
 {
 	mlx_do_sync(vars->mlx);
 	put_image(vars);
-	set_minimap2(vars->player, &vars->img, vars->map, 1320, 580);
+	// set_minimap2(vars->player, &vars->img, vars->map, 1320, 580);
 	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img.img, 0, 0);
 	return (0);
 }
@@ -111,10 +68,9 @@ int main(int argc, char **argv)
 	vars.img.addr = mlx_get_data_addr(vars.img.img, &vars.img.bits_per_pixel, &vars.img.size_line, &vars.img.endian);
 	get_img_and_add(vars, &vars.tex_ceiling);
 	get_img_and_add(vars, &vars.tex_floor);
-//	fill_back(&vars.img, &vars);
 	printf("w: %d h: %d\n", vars.screen.width, vars.screen.height);
 	put_image(&vars);
-	set_minimap2(vars.player, &vars.img, vars.map, 1320, 580);
+	// set_minimap2(vars.player, &vars.img, vars.map, 1320, 580);
 	if (argc == 3)
 	{
 		if (ft_strnstr("--save", argv[2], 6))
