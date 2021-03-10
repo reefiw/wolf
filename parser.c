@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/10 16:48:11 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/10 18:43:02 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -440,7 +440,7 @@ void main_parser(char *path, t_vars *vars)
 	if	((fd = open(path, O_RDONLY)) < 1)
 		error_handler("can't open file\n");
 	vars->map = (t_map *)malloc(sizeof(t_map));
-	temp = get_head(fd, vars);
+	temp = get_head(fd, vars); // <- 1 утечка тут
 	init_sprites(vars);
 	parse_player(vars, &temp);
 	close(fd);
@@ -458,7 +458,8 @@ void main_parser(char *path, t_vars *vars)
 		if (k > 8)
 			error_handler("invalid file1\n");
 	}
-	free(temp);
+//	free(temp);
+	clear_str_arr(temp);
 	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
 	if (fd != 8 || k != 8)
 		error_handler("invalid file2\n");
