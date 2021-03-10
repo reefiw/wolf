@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/09 19:16:50 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/10 16:48:11 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,11 @@ static int scip_digits(char *str, int flag, int bias)
 void resolution_parser(char ***temp, char *str, t_vars *vars)
 {
 	int		i;
+	int		max_w;
+	int		max_h;
 	char	*res_str;
 
+	mlx_get_screen_size(vars->mlx, &max_w, &max_h);
 	res_str = ft_strtrim(str, " ");
 	if (res_str[0] != 'R')
 		error_handler_clear("invalid resolution\n", *temp);
@@ -53,6 +56,7 @@ void resolution_parser(char ***temp, char *str, t_vars *vars)
 		error_handler_clear("invalid resolution\n", *temp);
 	vars->screen.width = 0;
 	vars->screen.width = ft_atoi(&res_str[i]);
+	vars->screen.width = vars->screen.width > max_w ? max_w : vars->screen.width;
 	while (ft_isdigit(res_str[i]))
 		i++;
 	i = scip_whitespaces(&res_str[i], i);
@@ -60,6 +64,7 @@ void resolution_parser(char ***temp, char *str, t_vars *vars)
 		error_handler_clear("invalid resolution\n", *temp);
 	vars->screen.height = 0;
 	vars->screen.height = ft_atoi(&res_str[i]);
+	vars->screen.height = vars->screen.height > max_h ? max_h : vars->screen.height;
 	if (!vars->screen.height || !vars->screen.width)
 		error_handler_clear("invalid resolution\n", *temp);
 	while (ft_isdigit(res_str[i]))
@@ -74,6 +79,8 @@ int texture_parser(char ***temp, char *str, t_tex *tex, t_vars *vars)
 	int		i;
 	char	*res_str;
 
+	if (tex->width && tex->height)
+		error_handler_clear("invalid texture\n", *temp);
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
@@ -233,9 +240,9 @@ static int parser_switch(char ***temp, char *str, t_vars *vars)
 		texture_parser(temp, str, &vars->tex_e, vars);
 	if (parser_case(str, "S ", 2) && (++k))
 		texture_parser(temp, str, &vars->tex_sprite, vars);
-	if (parser_case(str, "F ", 2) && (++k))
+	if (parser_case(str, "F ", 2) && !vars->color_floor && (++k))
 		color_parser(temp, str, vars, &vars->color_floor);
-	if (parser_case(str, "C ", 2) && (++k))
+	if (parser_case(str, "C ", 2) && !vars->color_floor && (++k))
 		color_parser(temp, str, vars, &vars->color_ceiling);
 	return (k);
 }
@@ -308,31 +315,30 @@ static void init_sprites(t_vars *vars)
 
 static void player_case(char s, t_player *player)
 {
-	player->dir_x = 1;
-	player->dir_y = 0;
-	player->plane_x = 0;
+	player->plane_x = 0.66;
 	player->plane_y = 0.66;
+	if (s == 'N')
+	{
+		player->dir_x = 0;
+		player->dir_y = -1;
+	}
 	if (s == 'E')
 	{
 		player->dir_x = 1;
 		player->dir_y = 0;
-		player->plane_x = 0;
-		player->plane_y = 0.66;
 	}
 	if (s == 'W')
 	{
-		player->dir_x = 1;
+		player->dir_x = -1;
 		player->dir_y = 0;
-		player->plane_x = 0;
-		player->plane_y = 0.66;
 	}
 	if (s == 'S')
 	{
-		player->dir_x = 1;
-		player->dir_y = 0;
-		player->plane_x = 0;
-		player->plane_y = 0.66;
+		player->dir_x = 0;
+		player->dir_y = 1;
 	}
+	player->plane_x *= player->dir_y * -1;
+	player->plane_y *= player->dir_x;
 }
 
 static void parse_player(t_vars *vars, char ***temp)
@@ -352,7 +358,9 @@ static void parse_player(t_vars *vars, char ***temp)
 			{
 				vars->player.x = j + 0.5;
 				vars->player.y = i + 0.5;
+				printf("x: %f y: %f \n", vars->player.x, vars->player.y);
 				player_case(vars->map->data[i][j], &vars->player);
+//				vars->player.plane_x = vars->player.plane_x * -1;
 				k++;
 			}
 		}
@@ -446,12 +454,12 @@ void main_parser(char *path, t_vars *vars)
 	while (temp[++fd])
 	{
 		k += parser_switch(&temp, temp[fd], vars);
-		printf("%d) %s\n", fd, temp[fd]);
+		printf("%d) k = %d %s\n", fd, k, temp[fd]);
 		if (k > 8)
-			error_handler("invalid file\n");
+			error_handler("invalid file1\n");
 	}
 	free(temp);
 	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
-	if (k != 8)
-		error_handler("invalid file\n");
+	if (fd != 8 || k != 8)
+		error_handler("invalid file2\n");
 }

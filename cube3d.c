@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/09 19:11:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/10 17:04:57 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ unsigned int get_darker_color(unsigned int color, double size)
 t_tex	*get_tex(t_vars *vars, int side)
 {
 	if (side == 0)
-		return	(&vars->tex_n);
+		return	(&vars->tex_e);
 	if (side == 1)
 		return (&vars->tex_s);
 	if (side == 2)
 		return (&vars->tex_w);
 	if (side == 3)
-		return (&vars->tex_e);
+		return (&vars->tex_n);
 	return (&vars->tex_e);
 }
 
@@ -38,15 +38,6 @@ void get_img_and_add(t_vars vars, t_tex *tex)
 {
 	tex->img = mlx_xpm_file_to_image(vars.mlx, tex->path, &tex->width, &tex->height);
 	tex->addr = mlx_get_data_addr(tex->img, &tex->bbp, &tex->size_line, &tex->endian);
-}
-
-int nothing(t_vars *vars)
-{
-	mlx_do_sync(vars->mlx);
-	put_image(vars);
-	// set_minimap2(vars->player, &vars->img, vars->map, 1320, 580);
-	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img.img, 0, 0);
-	return (0);
 }
 
 int main(int argc, char **argv)
@@ -80,6 +71,5 @@ int main(int argc, char **argv)
 	vars.mlx_window = mlx_new_window(vars.mlx, vars.screen.width, vars.screen.height, "cube3D");
 	mlx_put_image_to_window(vars.mlx, vars.mlx_window, vars.img.img, 0, 0);
 	mlx_hook(vars.mlx_window, 2, 1L<<0, key_hook, &vars);
-	mlx_loop_hook(vars.mlx, nothing, &vars);
 	mlx_loop(vars.mlx);
 }

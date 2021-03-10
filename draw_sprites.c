@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:35:29 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/09 18:46:45 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/10 17:16:45 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ static void	draw_sprites(t_vars *vars, t_draw_sprites *t)
 				t->color = *(unsigned int *)(vars->tex_sprite.addr + (t->texY *\
 				vars->tex_sprite.size_line + t->texX *\
 				(vars->tex_sprite.bbp / 8)));
+				t->color = get_darker_color(t->color, vars->sprites[t->i]->len / 6);
 				if ((t->color & 0x00FFFFFF) != 0)
 					put_pixel(&vars->img, t->stripe, t->j, t->color);
 				t->j++;
