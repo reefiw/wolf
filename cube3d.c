@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/10 18:25:56 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/11 17:43:20 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ unsigned int get_darker_color(unsigned int color, double size)
 t_tex	*get_tex(t_vars *vars, int side)
 {
 	if (side == 0)
-		return	(&vars->tex_e);
+		return	(&vars->tex_w);
 	if (side == 1)
-		return (&vars->tex_s);
-	if (side == 2)
-		return (&vars->tex_w);
-	if (side == 3)
 		return (&vars->tex_n);
+	if (side == 2)
+		return (&vars->tex_e);
+	if (side == 3)
+		return (&vars->tex_s);
 	return (&vars->tex_e);
 }
 

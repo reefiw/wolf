@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/10 18:43:02 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/11 19:56:35 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,37 +40,38 @@ static int scip_digits(char *str, int flag, int bias)
 	return (i + bias);
 }
 
+static void check_error(int bool, char *err, char ***temp)
+{
+	if (bool)
+		error_handler_clear(err, *temp);
+}
+
 void resolution_parser(char ***temp, char *str, t_vars *vars)
 {
 	int		i;
-	int		max_w;
-	int		max_h;
+	int		mw;
+	int		mh;
 	char	*res_str;
 
-	mlx_get_screen_size(vars->mlx, &max_w, &max_h);
+	mlx_get_screen_size(vars->mlx, &mw, &mh);
 	res_str = ft_strtrim(str, " ");
-	if (res_str[0] != 'R')
-		error_handler_clear("invalid resolution\n", *temp);
+	check_error(res_str[0] != 'R', "invalid resolution\n", temp);
 	i = scip_whitespaces(&res_str[1], 1);
-	if (!ft_isdigit(res_str[i]))
-		error_handler_clear("invalid resolution\n", *temp);
+	check_error(!ft_isdigit(res_str[i]), "invalid resolution\n", temp);
 	vars->screen.width = 0;
 	vars->screen.width = ft_atoi(&res_str[i]);
-	vars->screen.width = vars->screen.width > max_w ? max_w : vars->screen.width;
+	vars->screen.width = vars->screen.width > mw ? mw : vars->screen.width;
 	while (ft_isdigit(res_str[i]))
 		i++;
 	i = scip_whitespaces(&res_str[i], i);
-	if (!ft_isdigit(res_str[i]))
-		error_handler_clear("invalid resolution\n", *temp);
+	check_error(!ft_isdigit(res_str[i]), "invalid resolution\n", temp);
 	vars->screen.height = 0;
 	vars->screen.height = ft_atoi(&res_str[i]);
-	vars->screen.height = vars->screen.height > max_h ? max_h : vars->screen.height;
-	if (!vars->screen.height || !vars->screen.width)
-		error_handler_clear("invalid resolution\n", *temp);
+	vars->screen.height = vars->screen.height > mh ? mh : vars->screen.height;
+	check_error(!vars->screen.height || !vars->screen.width, "invalid resolution\n", temp);
 	while (ft_isdigit(res_str[i]))
 		i++;
-	if (res_str[i] != '\0')
-		error_handler_clear("invalid resolution\n", *temp);
+	check_error(res_str[i] != '\0', "invalid resolution\n", temp);
 	free(res_str);
 }
 
@@ -131,13 +132,13 @@ static int ft_char_num(char *str, int c)
 
 	i = -1;
 	num = 0;
-	while(str[++i])
+	while (str[++i])
 		if (str[i] == c)
 			num++;
 	return (num);
 }
 
-static void check_color_str(char ***temp, char *str)
+static void check_color_str(char ***temp, char *str) // 40 строк
 {
 	char **colors;
 	char *temp_str;
@@ -187,31 +188,25 @@ static void color_parser(char ***temp, char *str, t_vars *vars, int *color)
 	int				num;
 	char			*res_str;
 
-	(void)temp;
-	(void)vars;
-	*color = 0;
 	check_color_str(temp, &str[1]);
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	num = 0;
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	if (num > 255)
-		error_handler_clear("invalid color\n", *temp);
+	check_error(num > 255, "invalid color\n", temp);
 	*color = num << 16;
 	i = scip_digits(&res_str[i], 1, i);
 	i = scip_digits(&res_str[i], 0, i);
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	if (num > 255)
-		error_handler_clear("invalid color\n", *temp);
+	check_error(num > 255, "invalid color\n", temp);
 	*color = *color | num << 8;
 	i = scip_digits(&res_str[i], 1, i);
 	i = scip_digits(&res_str[i], 0, i);
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	if (num > 255)
-		error_handler_clear("invalid color\n", *temp);
+	check_error(num > 255, "invalid color\n", temp);
 	*color = *color | num;
 	free(res_str);
 }
@@ -275,10 +270,11 @@ static char **get_map(int fd, char *first_line)
 	result_arr[0] = ft_strdup1(first_line, 1);
 	while (get_next_line(fd, &line))
 		add_line(&result_arr, line);
+	free(line);
 	return (result_arr);
 }
 
-static void init_sprites(t_vars *vars)
+static void init_sprites(t_vars *vars) // 31 строка
 {
 	int i;
 	int j;
@@ -360,7 +356,6 @@ static void parse_player(t_vars *vars, char ***temp)
 				vars->player.y = i + 0.5;
 				printf("x: %f y: %f \n", vars->player.x, vars->player.y);
 				player_case(vars->map->data[i][j], &vars->player);
-//				vars->player.plane_x = vars->player.plane_x * -1;
 				k++;
 			}
 		}
@@ -369,7 +364,7 @@ static void parse_player(t_vars *vars, char ***temp)
 		error_handler_clear("invalid map\n", *temp);
 }
 
-static char **get_head(int fd, t_vars *vars)
+static char **get_head(int fd, t_vars *vars) //27 строк
 {
 	char	*buf;
 	char	*line;
@@ -429,7 +424,7 @@ static void check_map(char ***temp, t_vars *vars)
 	}
 }
 
-void main_parser(char *path, t_vars *vars)
+void main_parser(char *path, t_vars *vars) //32 строки
 {
 	int		fd;
 	int		k;
