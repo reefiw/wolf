@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/12 17:57:49 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/12 18:14:57 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void check_error(int bool, char *err)
 		error_handler(err);
 }
 
-void resolution_parser(char ***temp, char *str, t_vars *vars)
+void resolution_parser(char *str, t_vars *vars)
 {
 	int		i;
 	int		mw;
@@ -75,23 +75,21 @@ void resolution_parser(char ***temp, char *str, t_vars *vars)
 	free(res_str);
 }
 
-int texture_parser(char ***temp, char *str, t_tex *tex, t_vars *vars)
+int texture_parser(char *str, t_tex *tex, t_vars *vars)
 {
 	int		i;
 	char	*res_str;
 
-	if (tex->width && tex->height)
-		error_handler_clear("invalid texture\n", *temp);
+	check_error(tex->width && tex->height, "invalid texture\n");
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
 	if ((i = open(tex->path, O_RDONLY)) < 0)
-		error_handler_clear("invalid texture\n", *temp);
+		error_handler("invalid texture\n");
 	else
 		close(i);
 	get_img_and_add(*vars, tex);
-	if (!tex->img || !tex->addr)
-		error_handler_clear("invalid texture\n", *temp);
+	check_error(!tex->img || !tex->addr, "invalid texture\n");
 	free(res_str);
 	return (1);
 }
@@ -140,8 +138,7 @@ static int ft_char_num(char *str, int c)
 
 static void check_color_space_format(int i, char **colors, char *temp_str, char *str)
 {
-	if (i != 3 && i != 0)
-		error_handler("invalid color\n");
+	check_error(i != 3 && i != 0, "invalid color\n");
 	if (!i)
 	{
 		colors = ft_split(str, ' ');
@@ -149,32 +146,28 @@ static void check_color_space_format(int i, char **colors, char *temp_str, char 
 		while (colors[i])
 		{
 			temp_str = ft_strtrim(colors[i], " ");
-			if (!ft_isnum(temp_str))
-				error_handler("invalid color\n");
+			check_error(!ft_isnum(temp_str), "invalid color\n");
 			i++;
 			free(temp_str);
 		}
 		clear_str_arr(colors);
-		if (i != 3 && i != 0)
-			error_handler("invalid color\n");
+		check_error(i != 3 && i != 0, "invalid color\n");
 	}
 }
 
-static void check_color_str(char ***temp, char *str)
+static void check_color_str(char *str)
 {
 	char **colors;
 	char *temp_str;
 	int i;
 
-	if (!str[0] || ft_char_num(str, ',') > 2)
-		error_handler_clear("invalid color\n", *temp);
+	check_error(!str[0] || ft_char_num(str, ',') > 2, "invalid color\n");
 	colors = ft_split(str, ',');
 	i = 0;
 	while (colors[i] && colors[1])
 	{
 		temp_str = ft_strtrim(colors[i], " ");
-		if (!ft_isnum(temp_str))
-			error_handler("invalid color\n");
+		check_error(!ft_isnum(temp_str), "invalid color\n");
 		free(temp_str);
 		i++;
 	}
@@ -182,13 +175,13 @@ static void check_color_str(char ***temp, char *str)
 	check_color_space_format(i, colors, temp_str, str);
 }
 
-static void color_parser(char ***temp, char *str, t_vars *vars, int *color)
+static void color_parser(char *str, t_vars *vars, int *color)
 {
 	int				i;
 	int				num;
 	char			*res_str;
 
-	check_color_str(temp, &str[1]);
+	check_color_str(&str[1]);
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	num = 0;
@@ -218,27 +211,27 @@ static int parser_case(char *str, char *str_case, int n)
 	return (0);
 }
 
-static int parser_switch(char ***temp, char *str, t_vars *vars)
+static int parser_switch(char *str, t_vars *vars)
 {
 	int k;
 
 	k = 0;
 	if (parser_case(str, "R ", 2) && (++k))
-		resolution_parser(temp, str, vars);
+		resolution_parser(str, vars);
 	if (parser_case(str, "NO ", 3) && (++k))
-		texture_parser(temp, str, &vars->tex_n, vars);
+		texture_parser(str, &vars->tex_n, vars);
 	if (parser_case(str, "SO ", 3) && (++k))
-		texture_parser(temp, str, &vars->tex_s, vars);
+		texture_parser(str, &vars->tex_s, vars);
 	if (parser_case(str, "WE ", 3) && (++k))
-		texture_parser(temp, str, &vars->tex_w, vars);
+		texture_parser(str, &vars->tex_w, vars);
 	if (parser_case(str, "EA ", 3) && (++k))
-		texture_parser(temp, str, &vars->tex_e, vars);
+		texture_parser(str, &vars->tex_e, vars);
 	if (parser_case(str, "S ", 2) && (++k))
-		texture_parser(temp, str, &vars->tex_sprite, vars);
+		texture_parser(str, &vars->tex_sprite, vars);
 	if (parser_case(str, "F ", 2) && !vars->color_floor && (++k))
-		color_parser(temp, str, vars, &vars->color_floor);
+		color_parser(str, vars, &vars->color_floor);
 	if (parser_case(str, "C ", 2) && !vars->color_floor && (++k))
-		color_parser(temp, str, vars, &vars->color_ceiling);
+		color_parser(str, vars, &vars->color_ceiling);
 	return (k);
 }
 
@@ -346,7 +339,7 @@ static void player_case(char s, t_player *player)
 	player->plane_y *= player->dir_x;
 }
 
-static void parse_player(t_vars *vars, char ***temp)
+static void parse_player(t_vars *vars)
 {
 	int i;
 	int j;
@@ -369,8 +362,7 @@ static void parse_player(t_vars *vars, char ***temp)
 			}
 		}
 	}
-	if (k != 1)
-		error_handler_clear("invalid map\n", *temp);
+	check_error(k != 1, "invalid map\n");
 }
 
 static char **get_head(int fd, t_vars *vars)
@@ -402,14 +394,11 @@ static char **get_head(int fd, t_vars *vars)
 	return (temp);
 }
 
-static void check_map(char ***temp, t_vars *vars)
+static void check_map(t_vars *vars)
 {
 	int i;
 	int j;
 
-	i = -1;
-	while (vars->map->data[++i])
-		printf("%d) res: %d str: \"%s\"\n", i, !ft_strchr("012NSWE ", vars->map->data[i][0]),  vars->map->data[i]);
 	i = 0;
 	while (vars->map->data[i])
 	{
@@ -418,15 +407,15 @@ static void check_map(char ***temp, t_vars *vars)
 		{
 			if (ft_strchr("02NSWE", vars->map->data[i][j]))
 			{
-				if (i == 0 || j == 0 || !vars->map->data[i + 1] || !vars->map->data[i][j + 1] || ft_strlen1(vars->map->data[i - 1]) <= j || ft_strlen1(vars->map->data[i + 1]) <= j)
-					error_handler_clear("invalid map\n", *temp);
+				if (i == 0 || j == 0 || !vars->map->data[i + 1] ||\
+				!vars->map->data[i][j + 1] || ft_strlen1(vars->map->data[i - 1]) <= j ||\
+				ft_strlen1(vars->map->data[i + 1]) <= j)
+					error_handler("invalid map\n");
 			}
-			else if (!ft_strchr("1 ", vars->map->data[i][j]))
-				error_handler_clear("invalid map\n", *temp);
+			else check_error(!ft_strchr("1 ", vars->map->data[i][j]), "invalid map\n");
 			j++;
 		}
-		if (vars->map->data[i + 1] && !j)
-			error_handler_clear("invalid map\n", *temp);
+		check_error(vars->map->data[i + 1] && !j, "invalid map\n");
 		i++;
 	}
 }
@@ -443,15 +432,15 @@ void main_parser(char *path, t_vars *vars)
 	vars->map = (t_map *)malloc(sizeof(t_map));
 	temp = get_head(fd, vars);
 	init_sprites(vars);
-	parse_player(vars, &temp);
+	parse_player(vars);
 	close(fd);
 	k = -1;
 	while (vars->map->data[++k])
 		vars->map->height = k + 1;
-	check_map(&temp, vars);
+	check_map(vars);
 	fd = -1;
 	k = 0;
-	while (temp[++fd] && (k += parser_switch(&temp, temp[fd], vars)))
+	while (temp[++fd] && (k += parser_switch(temp[fd], vars)))
 		check_error(k > 8, "invalid file\n");
 	clear_str_arr(temp);
 	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
