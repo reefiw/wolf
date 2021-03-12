@@ -6,13 +6,13 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/12 18:14:57 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/12 19:16:19 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-static int scip_whitespaces(char *str, int s)
+static int	scip_whitespaces(char *str, int s)
 {
 	int i;
 
@@ -22,7 +22,7 @@ static int scip_whitespaces(char *str, int s)
 	return (i + s);
 }
 
-static int scip_digits(char *str, int flag, int bias)
+static int	scip_digits(char *str, int flag, int bias)
 {
 	int i;
 
@@ -40,13 +40,13 @@ static int scip_digits(char *str, int flag, int bias)
 	return (i + bias);
 }
 
-static void check_error(int bool, char *err)
+static void	check_err(int bool, char *err)
 {
 	if (bool)
 		error_handler(err);
 }
 
-void resolution_parser(char *str, t_vars *vars)
+void	resolution_parser(char *str, t_vars *vars)
 {
 	int		i;
 	int		mw;
@@ -55,32 +55,32 @@ void resolution_parser(char *str, t_vars *vars)
 
 	mlx_get_screen_size(vars->mlx, &mw, &mh);
 	res_str = ft_strtrim(str, " ");
-	check_error(res_str[0] != 'R', "invalid resolution\n");
+	check_err(res_str[0] != 'R', "invalid resolution\n");
 	i = scip_whitespaces(&res_str[1], 1);
-	check_error(!ft_isdigit(res_str[i]), "invalid resolution\n");
+	check_err(!ft_isdigit(res_str[i]), "invalid resolution\n");
 	vars->screen.width = 0;
 	vars->screen.width = ft_atoi(&res_str[i]);
 	vars->screen.width = vars->screen.width > mw ? mw : vars->screen.width;
 	while (ft_isdigit(res_str[i]))
 		i++;
 	i = scip_whitespaces(&res_str[i], i);
-	check_error(!ft_isdigit(res_str[i]), "invalid resolution\n");
+	check_err(!ft_isdigit(res_str[i]), "invalid resolution\n");
 	vars->screen.height = 0;
 	vars->screen.height = ft_atoi(&res_str[i]);
 	vars->screen.height = vars->screen.height > mh ? mh : vars->screen.height;
-	check_error(!vars->screen.height || !vars->screen.width, "invalid resolution\n");
+	check_err(!vars->screen.height || !vars->screen.width, "bad resolution\n");
 	while (ft_isdigit(res_str[i]))
 		i++;
-	check_error(res_str[i] != '\0', "invalid resolution\n");
+	check_err(res_str[i] != '\0', "invalid resolution\n");
 	free(res_str);
 }
 
-int texture_parser(char *str, t_tex *tex, t_vars *vars)
+int	texture_parser(char *str, t_tex *tex, t_vars *vars)
 {
 	int		i;
 	char	*res_str;
 
-	check_error(tex->width && tex->height, "invalid texture\n");
+	check_err(tex->width && tex->height, "invalid texture\n");
 	res_str = ft_strtrim(str, " ");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
@@ -89,12 +89,12 @@ int texture_parser(char *str, t_tex *tex, t_vars *vars)
 	else
 		close(i);
 	get_img_and_add(*vars, tex);
-	check_error(!tex->img || !tex->addr, "invalid texture\n");
+	check_err(!tex->img || !tex->addr, "invalid texture\n");
 	free(res_str);
 	return (1);
 }
 
-static void clear_str_arr(char **arr)
+static void	clear_str_arr(char **arr)
 {
 	int i;
 
@@ -108,7 +108,7 @@ static void clear_str_arr(char **arr)
 	free(arr);
 }
 
-static int ft_isnum(char *str)
+static int	ft_isnum(char *str)
 {
 	int i;
 
@@ -123,7 +123,7 @@ static int ft_isnum(char *str)
 	return (i);
 }
 
-static int ft_char_num(char *str, int c)
+static int	ft_char_num(char *str, int c)
 {
 	int i;
 	int num;
@@ -136,9 +136,10 @@ static int ft_char_num(char *str, int c)
 	return (num);
 }
 
-static void check_color_space_format(int i, char **colors, char *temp_str, char *str)
+static void	check_color_space_format\
+	(int i, char **colors, char *temp_str, char *str)
 {
-	check_error(i != 3 && i != 0, "invalid color\n");
+	check_err(i != 3 && i != 0, "invalid color\n");
 	if (!i)
 	{
 		colors = ft_split(str, ' ');
@@ -146,28 +147,28 @@ static void check_color_space_format(int i, char **colors, char *temp_str, char 
 		while (colors[i])
 		{
 			temp_str = ft_strtrim(colors[i], " ");
-			check_error(!ft_isnum(temp_str), "invalid color\n");
+			check_err(!ft_isnum(temp_str), "invalid color\n");
 			i++;
 			free(temp_str);
 		}
 		clear_str_arr(colors);
-		check_error(i != 3 && i != 0, "invalid color\n");
+		check_err(i != 3 && i != 0, "invalid color\n");
 	}
 }
 
-static void check_color_str(char *str)
+static void	check_color_str(char *str)
 {
-	char **colors;
-	char *temp_str;
-	int i;
+	char	**colors;
+	char	*temp_str;
+	int		i;
 
-	check_error(!str[0] || ft_char_num(str, ',') > 2, "invalid color\n");
+	check_err(!str[0] || ft_char_num(str, ',') > 2, "invalid color\n");
 	colors = ft_split(str, ',');
 	i = 0;
 	while (colors[i] && colors[1])
 	{
 		temp_str = ft_strtrim(colors[i], " ");
-		check_error(!ft_isnum(temp_str), "invalid color\n");
+		check_err(!ft_isnum(temp_str), "invalid color\n");
 		free(temp_str);
 		i++;
 	}
@@ -175,7 +176,7 @@ static void check_color_str(char *str)
 	check_color_space_format(i, colors, temp_str, str);
 }
 
-static void color_parser(char *str, t_vars *vars, int *color)
+static void	color_parser(char *str, t_vars *vars, int *color)
 {
 	int				i;
 	int				num;
@@ -187,31 +188,31 @@ static void color_parser(char *str, t_vars *vars, int *color)
 	num = 0;
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	check_error(num > 255, "invalid color\n");
+	check_err(num > 255, "invalid color\n");
 	*color = num << 16;
 	i = scip_digits(&res_str[i], 1, i);
 	i = scip_digits(&res_str[i], 0, i);
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	check_error(num > 255, "invalid color\n");
+	check_err(num > 255, "invalid color\n");
 	*color = *color | num << 8;
 	i = scip_digits(&res_str[i], 1, i);
 	i = scip_digits(&res_str[i], 0, i);
 	if (ft_isdigit(res_str[i]))
 		num = ft_atoi(&res_str[i]);
-	check_error(num > 255, "invalid color\n");
+	check_err(num > 255, "invalid color\n");
 	*color = *color | num;
 	free(res_str);
 }
 
-static int parser_case(char *str, char *str_case, int n)
+static int	parser_case(char *str, char *str_case, int n)
 {
 	if (ft_strnstr(str, str_case, n))
 		return (1);
 	return (0);
 }
 
-static int parser_switch(char *str, t_vars *vars)
+static int	parser_switch(char *str, t_vars *vars)
 {
 	int k;
 
@@ -235,9 +236,9 @@ static int parser_switch(char *str, t_vars *vars)
 	return (k);
 }
 
-static void add_line(char ***arr, char *line)
+static void	add_line(char ***arr, char *line)
 {
-	int		len;;
+	int		len;
 	char	**result_arr;
 
 	len = 0;
@@ -253,7 +254,7 @@ static void add_line(char ***arr, char *line)
 	len = 0;
 }
 
-static char **get_map(int fd, char *first_line)
+static char	**get_map(int fd, char *first_line)
 {
 	char *line;
 	char **result_arr;
@@ -267,7 +268,7 @@ static char **get_map(int fd, char *first_line)
 	return (result_arr);
 }
 
-static void put_sprites_in_array(t_vars *vars)
+static void	put_sprites_in_array(t_vars *vars)
 {
 	int i;
 	int j;
@@ -281,7 +282,8 @@ static void put_sprites_in_array(t_vars *vars)
 		while (vars->map->data[i][++j])
 			if (vars->map->data[i][j] == '2')
 			{
-				vars->sprites[sprite_num] = (t_sprite *)malloc(sizeof(t_sprite));
+				vars->sprites[sprite_num] =\
+				(t_sprite *)malloc(sizeof(t_sprite));
 				vars->sprites[sprite_num]->x = j + 0.5;
 				vars->sprites[sprite_num]->y = i + 0.5;
 				vars->sprites[sprite_num]->len = 0;
@@ -290,7 +292,7 @@ static void put_sprites_in_array(t_vars *vars)
 	}
 }
 
-static void init_sprites(t_vars *vars)
+static void	init_sprites(t_vars *vars)
 {
 	int i;
 	int j;
@@ -311,7 +313,7 @@ static void init_sprites(t_vars *vars)
 	put_sprites_in_array(vars);
 }
 
-static void player_case(char s, t_player *player)
+static void	player_case(char s, t_player *player)
 {
 	player->plane_x = 0.66;
 	player->plane_y = 0.66;
@@ -339,7 +341,7 @@ static void player_case(char s, t_player *player)
 	player->plane_y *= player->dir_x;
 }
 
-static void parse_player(t_vars *vars)
+static void	parse_player(t_vars *vars)
 {
 	int i;
 	int j;
@@ -362,10 +364,10 @@ static void parse_player(t_vars *vars)
 			}
 		}
 	}
-	check_error(k != 1, "invalid map\n");
+	check_err(k != 1, "invalid map\n");
 }
 
-static char **get_head(int fd, t_vars *vars)
+static char	**get_head(int fd, t_vars *vars)
 {
 	char	*buf;
 	char	*line;
@@ -377,7 +379,7 @@ static char **get_head(int fd, t_vars *vars)
 	{
 		k = scip_whitespaces(line, 0);
 		if (ft_strchr("012", line[k]))
-			break;
+			break ;
 		buf = ft_strjoin1(buf, "\n", 1);
 		buf = ft_strjoin1(buf, line, 1);
 		free(line);
@@ -394,7 +396,7 @@ static char **get_head(int fd, t_vars *vars)
 	return (temp);
 }
 
-static void check_map(t_vars *vars)
+static void	check_map(t_vars *vars)
 {
 	int i;
 	int j;
@@ -408,27 +410,30 @@ static void check_map(t_vars *vars)
 			if (ft_strchr("02NSWE", vars->map->data[i][j]))
 			{
 				if (i == 0 || j == 0 || !vars->map->data[i + 1] ||\
-				!vars->map->data[i][j + 1] || ft_strlen1(vars->map->data[i - 1]) <= j ||\
+				!vars->map->data[i][j + 1] || ft_strlen1(\
+				vars->map->data[i - 1]) <= j ||\
 				ft_strlen1(vars->map->data[i + 1]) <= j)
 					error_handler("invalid map\n");
 			}
-			else check_error(!ft_strchr("1 ", vars->map->data[i][j]), "invalid map\n");
+			else
+				check_err(!ft_strchr("1 ",\
+			vars->map->data[i][j]), "invalid map\n");
 			j++;
 		}
-		check_error(vars->map->data[i + 1] && !j, "invalid map\n");
+		check_err(vars->map->data[i + 1] && !j, "invalid map\n");
 		i++;
 	}
 }
 
-void main_parser(char *path, t_vars *vars)
+void	main_parser(char *path, t_vars *vars)
 {
 	int		fd;
 	int		k;
 	char	**temp;
 
-	check_error(ft_strncmp(&path[ft_strlen(path) - 4], ".cub", 4),\
+	check_err(ft_strncmp(&path[ft_strlen(path) - 4], ".cub", 4),\
 	"invalid extension\n");
-	check_error((fd = open(path, O_RDONLY)) < 1, "can't open file\n");
+	check_err((fd = open(path, O_RDONLY)) < 1, "can't open file\n");
 	vars->map = (t_map *)malloc(sizeof(t_map));
 	temp = get_head(fd, vars);
 	init_sprites(vars);
@@ -441,8 +446,8 @@ void main_parser(char *path, t_vars *vars)
 	fd = -1;
 	k = 0;
 	while (temp[++fd] && (k += parser_switch(temp[fd], vars)))
-		check_error(k > 8, "invalid file\n");
+		check_err(k > 8, "invalid file\n");
 	clear_str_arr(temp);
 	vars->z_buffer = (double *)malloc(sizeof(double) * vars->screen.width);
-	check_error(fd != 8 || k != 8, "invalid file\n");
+	check_err(fd != 8 || k != 8, "invalid file\n");
 }
