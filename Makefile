@@ -1,6 +1,7 @@
 NAME=cub3D
 SRCS = cube3d.c GNL/get_next_line.c GNL/get_next_line_utils.c dda.c inits.c moves.c draw_sprites.c error_handler.c \
-		floor_ceiling.c ft_substr.c parser.c simplest_drawing.c screenshot.c
+		floor_ceiling.c ft_substr.c parser.c simplest_drawing.c screenshot.c other.c color_texture_resolution_parser.c\
+		file_and_map_parser.c player_and_sprite_parser.c
 OBJS = $(SRCS:.c=.o)
 LIBS = libft.a libmlx.dylib
 INCLUDES = cube3D.h

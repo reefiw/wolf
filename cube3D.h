@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/10 17:13:45 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/12 20:10:58 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,6 @@ void		new_image(t_vars *vars);
 void		init_player(t_vars *vars);
 void		init_tex(t_tex *tex, int width, int height);
 void		put_pixel(t_image *img, int x, int y, int color);
-void		draw_square(t_image *img, int width, int x, int y, int color);
-void		set_minimap2(t_player player, t_image *img, t_map *map, int d_x, int d_y);
 void		put_sprites(t_vars *vars);
 void		put_floor_ceiling(t_vars *vars);
 t_tex		*get_tex(t_vars *vars, int side);
@@ -194,6 +192,20 @@ void		error_handler_clear(char *str_err, char **bfree);
 void		main_parser(char *path, t_vars *vars);
 void		get_img_and_add(t_vars vars, t_tex *tex);
 void		do_screenshot(t_vars *vars);
+void		check_err(int bool, char *err);
+int			scip_whitespaces(char *str, int s);
+int			scip_digits(char *str, int flag, int bias);
+void		clear_str_arr(char **arr);
+int			ft_isnum(char *str);
+int			ft_char_num(char *str, int c);
+void		color_parser(char *str, t_vars *vars, int *color);
+void		texture_parser(char *str, t_tex *tex, t_vars *vars);
+void		resolution_parser(char *str, t_vars *vars);
+char		**get_head(int fd, t_vars *vars);
+void		check_map(t_vars *vars);
+void		parse_player(t_vars *vars);
+void		init_sprites(t_vars *vars);
+
 
 # include <stdlib.h>
 # include <unistd.h>

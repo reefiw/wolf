@@ -6,13 +6,13 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/09 14:02:53 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/09 16:15:40 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 14:09:38 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-static void get_head(int fd, t_vars *vars)
+static void			get_head_bmp(int fd, t_vars *vars)
 {
 	unsigned char	header[54];
 	int				header_size;
@@ -41,7 +41,7 @@ static void get_head(int fd, t_vars *vars)
 	write(fd, header, 54);
 }
 
-static unsigned int get_pixel(t_image *img, int x, int y)
+static unsigned int	get_pixel(t_image *img, int x, int y)
 {
 	char *pixel;
 
@@ -49,7 +49,7 @@ static unsigned int get_pixel(t_image *img, int x, int y)
 	return (*(unsigned int *)pixel);
 }
 
-static void get_body(int fd, t_vars *vars)
+static void			get_body(int fd, t_vars *vars)
 {
 	int				i;
 	int				j;
@@ -64,23 +64,27 @@ static void get_body(int fd, t_vars *vars)
 		{
 			pixel = get_pixel(&vars->img, j, i);
 			pixel_line[j * vars->img.bytes_pp] = (unsigned char)pixel;
-			pixel_line[j * vars->img.bytes_pp + 1] = (unsigned char)(pixel >> 8);
-			pixel_line[j * vars->img.bytes_pp + 2] = (unsigned char)(pixel >> 16);
-			pixel_line[j * vars->img.bytes_pp + 3] = (unsigned char)(pixel >> 24);
+			pixel_line[j * vars->img.bytes_pp + 1] =\
+			(unsigned char)(pixel >> 8);
+			pixel_line[j * vars->img.bytes_pp + 2] =\
+			(unsigned char)(pixel >> 16);
+			pixel_line[j * vars->img.bytes_pp + 3] =\
+			(unsigned char)(pixel >> 24);
 		}
 		write(fd, pixel_line, vars->screen.width * vars->img.bytes_pp);
 	}
 }
 
-void do_screenshot(t_vars *vars)
+void				do_screenshot(t_vars *vars)
 {
 	int fd;
 
-	fd = open("./screenshot.bmp", O_CREAT | O_TRUNC | O_RDWR, S_IWRITE | S_IREAD);
+	fd = open("./screenshot.bmp",\
+	O_CREAT | O_TRUNC | O_RDWR, S_IWRITE | S_IREAD);
 	if (fd == -1)
 		error_handler("Fail screenshot");
 	vars->img.bytes_pp = vars->img.bits_per_pixel / 8;
-	get_head(fd, vars);
+	get_head_bmp(fd, vars);
 	get_body(fd, vars);
 	close(fd);
 	exit(0);

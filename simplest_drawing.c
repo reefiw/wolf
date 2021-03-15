@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:36 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/08 20:20:03 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/12 20:10:48 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,6 @@ void	put_pixel(t_image *img, int x, int y, int color)
 
 	pixel = img->addr + (y * img->size_line + x * (img->bits_per_pixel / 8));
 	*(unsigned int *)pixel = color;
-}
-
-void	draw_square(t_image *img, int width, int x, int y, int color)
-{
-	int i;
-	int j;
-
-	i = -1;
-	while (++i < width)
-	{
-		j = -1;
-		while (++j < width)
-			put_pixel(img, x + i, y + j, color);
-	}
 }
 
 void	fill_back(t_image *img, t_vars *vars)
@@ -51,31 +37,4 @@ void	fill_back(t_image *img, t_vars *vars)
 			i++;
 		}
 	}
-}
-
-void	set_minimap2(t_player player, t_image *img,\
-		t_map *map, int d_x, int d_y)
-{
-	int d;
-	int i;
-	int k;
-	int j;
-
-	d = 20;
-	k = 0;
-	i = 0;
-	while (i < map->height)
-	{
-		j = 0;
-		while (map->data[i][j])
-		{
-			if (map->data[i][j] == '1')
-				draw_square(img, d, d_x + (((k / d) % 16) * d),\
-				d_y + ((((k / d)) / 16) * d), 0xFFFFFFF);
-			k += d;
-			j++;
-		}
-		i++;
-	}
-	draw_square(img, 10, d_x + (player.x * d), d_y + (player.y * d), 0xFF0000);
 }
