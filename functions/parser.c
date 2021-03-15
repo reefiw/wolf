@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 14:08:16 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3D.h"
+#include "cube3d.h"
 
 static int	parser_case(char *str, char *str_case, int n)
 {

@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:36 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 14:54:35 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3D.h"
+#include "cube3d.h"
 
 unsigned int	get_darker_color(unsigned int color, double size)
 {

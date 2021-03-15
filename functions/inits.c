@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:45 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/25 19:41:29 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3D.h"
+#include "cube3d.h"
 
 void	new_image(t_vars *vars)
 {

@@ -4,7 +4,7 @@ SRCS = ./functions/cube3d.c ./functions/GNL/get_next_line.c ./functions/GNL/get_
 		./functions/file_and_map_parser.c ./functions/player_and_sprite_parser.c
 OBJS = $(SRCS:.c=.o)
 LIBS = libft.a libmlx.dylib
-INCLUDES = ./functions/cube3D.h
+INCLUDES = ./functions/cube3d.h
 all: $(SRCS) $(NAME)
 $(NAME): $(OBJS)
 	make -C ./functions/libft/ bonus

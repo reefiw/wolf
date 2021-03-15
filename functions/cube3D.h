@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:05:24 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:15:49 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,22 @@
 # define SPEED 0.5
 # define RSPEED 0.1
 
-typedef struct	s_map_list
+# include <stdlib.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <math.h>
+# include <mlx.h>
+# include <unistd.h>
+# include "GNL/get_next_line.h"
+# include "libft/libft.h"
+
+typedef struct		s_map_list
 {
 	char *data;
 	void *next;
-}				t_map_list;
+}					t_map_list;
 
-
-typedef struct	s_image
+typedef struct		s_image
 {
 	void	*img;
 	char	*addr;
@@ -32,9 +40,9 @@ typedef struct	s_image
 	int		bytes_pp;
 	int		size_line;
 	int		endian;
-}				t_image;
+}					t_image;
 
-typedef struct	s_player
+typedef struct		s_player
 {
 	float	x;
 	float	y;
@@ -43,18 +51,18 @@ typedef struct	s_player
 	float	plane_x;
 	float	plane_y;
 	float	fov;
-}				t_player;
+}					t_player;
 
-typedef struct	s_map
+typedef struct		s_map
 {
 	char	**data;
 	int		width;
 	int		height;
 	int		player_x;
 	int		player_y;
-}				t_map;
+}					t_map;
 
-typedef struct	s_tex
+typedef struct		s_tex
 {
 	int		width;
 	int		height;
@@ -64,22 +72,23 @@ typedef struct	s_tex
 	int		size_line;
 	int		endian;
 	char	*path;
-}				t_tex;
+}					t_tex;
 
-typedef struct s_sprite
+typedef struct		s_sprite
 {
 	float	x;
 	float	y;
 	float	len;
-}				t_sprite;
+}					t_sprite;
 
-typedef struct	s_screen
+typedef struct		s_screen
 {
 	int		width;
 	int		height;
-}				t_screen;
+}					t_screen;
 
-typedef struct	s_vars {
+typedef struct		s_vars
+{
 	void		*mlx;
 	void		*mlx_window;
 	double		*z_buffer;
@@ -98,9 +107,10 @@ typedef struct	s_vars {
 	t_tex		tex_ceiling;
 	t_screen	screen;
 	t_sprite	**sprites;
-}				t_vars;
+}					t_vars;
 
-typedef struct	s_dda {
+typedef struct		s_dda
+{
 	double			ray_dir_x;
 	double			ray_dir_y;
 	double			camera_x;
@@ -128,31 +138,31 @@ typedef struct	s_dda {
 	t_tex			*tex;
 }					t_dda;
 
-typedef struct	s_draw_sprites
+typedef struct		s_draw_sprites
 {
-	t_sprite	*temp_sprite;
-	int			i;
-	int			j;
-	int			d;
-	int			stripe;
-	int			spritescreenx;
-	int			sprite_h;
-	int			sprite_w;
-	int			drawstarty;
-	int			drawstartx;
-	int			drawendx;
-	int			drawendy;
-	int			tex_x;
-	int			tex_y;
-	double		spritex;
-	double		spritey;
-	double		invdet;
-	double		transformx;
-	double		transformy;
+	t_sprite		*temp_sprite;
+	int				i;
+	int				j;
+	int				d;
+	int				stripe;
+	int				spritescreenx;
+	int				sprite_h;
+	int				sprite_w;
+	int				drawstarty;
+	int				drawstartx;
+	int				drawendx;
+	int				drawendy;
+	int				tex_x;
+	int				tex_y;
+	double			spritex;
+	double			spritey;
+	double			invdet;
+	double			transformx;
+	double			transformy;
 	unsigned int	color;
-}				t_draw_sprites;
+}					t_draw_sprites;
 
-typedef struct	s_floor_ceiling
+typedef struct		s_floor_ceiling
 {
 	int				i;
 	int				j;
@@ -167,53 +177,43 @@ typedef struct	s_floor_ceiling
 	double			raydirx1;
 	double			raydiry1;
 	double			posz;
-	double			rowDistance;
+	double			rowdistance;
 	double			floorstepx;
 	double			floorstepy;
 	double			floorx;
 	double			floory;
-}				t_floor_ceiling;
+}					t_floor_ceiling;
 
-
-int			key_hook(int key_code, void *param);
-void		fill_back(t_image *img, t_vars *vars);
-void		put_image(t_vars *vars);
-void		set_minimap2(t_player player, t_image *img, t_map *map, int d_x, int d_y);
-void		new_image(t_vars *vars);
-void		init_player(t_vars *vars);
-void		init_tex(t_tex *tex, int width, int height);
-void		put_pixel(t_image *img, int x, int y, int color);
-void		put_sprites(t_vars *vars);
-void		put_floor_ceiling(t_vars *vars);
-t_tex		*get_tex(t_vars *vars, int side);
-unsigned	int get_darker_color(unsigned int color, double size);
-void		error_handler(char *str_err);
-void		error_handler_clear(char *str_err, char **bfree);
-void		main_parser(char *path, t_vars *vars);
-void		get_img_and_add(t_vars vars, t_tex *tex);
-void		do_screenshot(t_vars *vars);
-void		check_err(int bool, char *err);
-int			scip_whitespaces(char *str, int s);
-int			scip_digits(char *str, int flag, int bias);
-void		clear_str_arr(char **arr);
-int			ft_isnum(char *str);
-int			ft_char_num(char *str, int c);
-void		color_parser(char *str, t_vars *vars, int *color);
-void		texture_parser(char *str, t_tex *tex, t_vars *vars);
-void		resolution_parser(char *str, t_vars *vars);
-char		**get_head(int fd, t_vars *vars);
-void		check_map(t_vars *vars);
-void		parse_player(t_vars *vars);
-void		init_sprites(t_vars *vars);
-
-
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <math.h>
-# include <mlx.h>
-# include <unistd.h>
-# include "GNL/get_next_line.h"
-# include "libft/libft.h"
+int					key_hook(int key_code, void *param);
+void				fill_back(t_image *img, t_vars *vars);
+void				put_image(t_vars *vars);
+void				set_minimap2(t_player player, t_image *img,\
+					t_map *map, int d_x, int d_y);
+void				new_image(t_vars *vars);
+void				init_player(t_vars *vars);
+void				init_tex(t_tex *tex, int width, int height);
+void				put_pixel(t_image *img, int x, int y, int color);
+void				put_sprites(t_vars *vars);
+void				put_floor_ceiling(t_vars *vars);
+t_tex				*get_tex(t_vars *vars, int side);
+unsigned	int		get_darker_color(unsigned int color, double size);
+void				error_handler(char *str_err);
+void				error_handler_clear(char *str_err, char **bfree);
+void				main_parser(char *path, t_vars *vars);
+void				get_img_and_add(t_vars vars, t_tex *tex);
+void				do_screenshot(t_vars *vars);
+void				check_err(int bool, char *err);
+int					scip_whitespaces(char *str, int s);
+int					scip_digits(char *str, int flag, int bias);
+void				clear_str_arr(char **arr);
+int					ft_isnum(char *str);
+int					ft_char_num(char *str, int c);
+void				color_parser(char *str, t_vars *vars, int *color);
+void				texture_parser(char *str, t_tex *tex, t_vars *vars);
+void				resolution_parser(char *str, t_vars *vars);
+char				**get_head(int fd, t_vars *vars);
+void				check_map(t_vars *vars);
+void				parse_player(t_vars *vars);
+void				init_sprites(t_vars *vars);
 
 #endif

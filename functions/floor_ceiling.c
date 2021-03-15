@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:47:55 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:05:24 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3D.h"
+#include "cube3d.h"
 
 static void	draw_floor_ceiling(t_vars *vars, t_floor_ceiling *t)
 {
@@ -27,11 +27,11 @@ static void	draw_floor_ceiling(t_vars *vars, t_floor_ceiling *t)
 		t->color = *(unsigned int *)(vars->tex_floor.addr +\
 		(t->ty * vars->tex_floor.size_line +\
 		t->tx * (vars->tex_floor.bbp / 8)));
-		t->color = get_darker_color(t->color, t->rowDistance);
+		t->color = get_darker_color(t->color, t->rowdistance);
 		put_pixel(&vars->img, t->j, t->i, t->color);
 		t->color = *(unsigned int *)(vars->tex_ceiling.addr + (t->ty\
 		* vars->tex_ceiling.size_line + t->tx * (vars->tex_ceiling.bbp / 8)));
-		t->color = get_darker_color(t->color, t->rowDistance);
+		t->color = get_darker_color(t->color, t->rowdistance);
 		put_pixel(&vars->img, t->j, vars->screen.height - t->i - 1, t->color);
 		t->j++;
 	}
@@ -50,13 +50,13 @@ void		put_floor_ceiling(t_vars *vars)
 	while (t.i < vars->screen.height)
 	{
 		t.p = t.i - vars->screen.height / 2;
-		t.rowDistance = t.posz / t.p;
-		t.floorstepx = t.rowDistance * (t.raydirx1 - t.raydirx0) /\
+		t.rowdistance = t.posz / t.p;
+		t.floorstepx = t.rowdistance * (t.raydirx1 - t.raydirx0) /\
 		vars->screen.width;
-		t.floorstepy = t.rowDistance * (t.raydiry1 - t.raydiry0) /\
+		t.floorstepy = t.rowdistance * (t.raydiry1 - t.raydiry0) /\
 		vars->screen.width;
-		t.floorx = vars->player.x + t.rowDistance * t.raydirx0;
-		t.floory = vars->player.y + t.rowDistance * t.raydiry0;
+		t.floorx = vars->player.x + t.rowdistance * t.raydirx0;
+		t.floory = vars->player.y + t.rowdistance * t.raydiry0;
 		t.j = 0;
 		draw_floor_ceiling(vars, &t);
 		t.i++;

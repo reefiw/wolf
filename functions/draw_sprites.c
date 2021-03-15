@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:35:29 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:07:29 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cube3D.h"
+#include "cube3d.h"
 
 static void	sort_sprites(t_vars *vars, t_draw_sprites *t)
 {
