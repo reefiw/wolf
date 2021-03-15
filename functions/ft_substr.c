@@ -6,11 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/30 13:49:06 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 19:33:51 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 19:42:20 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
+#include "cube3d.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {

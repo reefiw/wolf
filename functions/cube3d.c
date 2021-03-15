@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 20:10:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,12 @@ static void		start_cub(t_vars vars)
 
 int				main(int argc, char **argv)
 {
-	int			fd;
+	int			len;
 	t_vars		vars;
 
 	vars.tex_floor.path = "./textures/mossy.xpm";
 	vars.tex_ceiling.path = "./textures/wood.xpm";
-	check_err(argc < 2 || argc > 3, "Incorrect arguments");
+	check_err(argc < 2 || argc > 3, "Incorrect arguments\n");
 	vars.mlx = mlx_init();
 	main_parser(argv[1], &vars);
 	new_image(&vars);
@@ -68,10 +68,11 @@ int				main(int argc, char **argv)
 	put_image(&vars);
 	if (argc == 3)
 	{
-		if (ft_strnstr("--save", argv[2], 6))
+		len = ft_strlen(argv[2]);
+		if (len == 6 && !ft_memcmp("--save", argv[2], len))
 			do_screenshot(&vars);
 		else
-			error_handler("Incorrect arguments");
+			error_handler("Incorrect arguments\n");
 	}
 	start_cub(vars);
 }
