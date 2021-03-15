@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/12 20:10:58 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:05:24 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,25 +104,25 @@ typedef struct	s_dda {
 	double			ray_dir_x;
 	double			ray_dir_y;
 	double			camera_x;
-	double			sideDist_x;
-	double			sideDist_y;
-	double			deltaDist_x;
-	double			deltaDist_y;
-	double			perpWallDist;
-	double			wallX;
+	double			sidedist_x;
+	double			sidedist_y;
+	double			deltadist_x;
+	double			deltadist_y;
+	double			wall_dist;
+	double			wallx;
 	double			step;
-	double			texPos;
-	int				lineHeight;
-	int				drawStart;
-	int				drawEnd;
+	double			texpos;
+	int				line_h;
+	int				drawstart;
+	int				drawend;
 	int				map_x;
 	int				map_y;
 	int				step_x;
 	int				step_y;
 	int				hit;
 	int				side;
-	int				texX;
-	int				texY;
+	int				tex_x;
+	int				tex_y;
 	int				i;
 	unsigned int	color;
 	t_tex			*tex;
@@ -135,20 +135,20 @@ typedef struct	s_draw_sprites
 	int			j;
 	int			d;
 	int			stripe;
-	int			spriteScreenX;
-	int			spriteHeight;
-	int			spriteWidth;
-	int			drawStartY;
-	int			drawStartX;
-	int			drawEndX;
-	int			drawEndY;
-	int			texX;
-	int			texY;
-	double		spriteX;
-	double		spriteY;
-	double		invDet;
-	double		transformX;
-	double		transformY;
+	int			spritescreenx;
+	int			sprite_h;
+	int			sprite_w;
+	int			drawstarty;
+	int			drawstartx;
+	int			drawendx;
+	int			drawendy;
+	int			tex_x;
+	int			tex_y;
+	double		spritex;
+	double		spritey;
+	double		invdet;
+	double		transformx;
+	double		transformy;
 	unsigned int	color;
 }				t_draw_sprites;
 
@@ -157,21 +157,21 @@ typedef struct	s_floor_ceiling
 	int				i;
 	int				j;
 	int				p;
-	int				cellX;
-	int				cellY;
+	int				cellx;
+	int				celly;
 	int				tx;
 	int				ty;
 	unsigned int	color;
-	double			rayDirX0;
-	double			rayDirY0;
-	double			rayDirX1;
-	double			rayDirY1;
-	double			posZ;
+	double			raydirx0;
+	double			raydiry0;
+	double			raydirx1;
+	double			raydiry1;
+	double			posz;
 	double			rowDistance;
-	double			floorStepX;
-	double			floorStepY;
-	double			floorX;
-	double			floorY;
+	double			floorstepx;
+	double			floorstepy;
+	double			floorx;
+	double			floory;
 }				t_floor_ceiling;
 
 

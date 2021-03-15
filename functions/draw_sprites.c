@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:35:29 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 14:06:06 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:07:29 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,51 +43,51 @@ static void	sort_sprites(t_vars *vars, t_draw_sprites *t)
 
 static void	calc_before_draw(t_vars *vars, t_draw_sprites *t)
 {
-	t->spriteX = vars->sprites[t->i]->x - vars->player.x;
-	t->spriteY = vars->sprites[t->i]->y - vars->player.y;
-	t->invDet = 1.0 / (vars->player.plane_x * vars->player.dir_y -\
+	t->spritex = vars->sprites[t->i]->x - vars->player.x;
+	t->spritey = vars->sprites[t->i]->y - vars->player.y;
+	t->invdet = 1.0 / (vars->player.plane_x * vars->player.dir_y -\
 	vars->player.dir_x * vars->player.plane_y);
-	t->transformX = t->invDet * (vars->player.dir_y * t->spriteX -\
-	vars->player.dir_x * t->spriteY);
-	t->transformY = t->invDet * (-vars->player.plane_y * t->spriteX +\
-	vars->player.plane_x * t->spriteY);
-	t->spriteScreenX = (int)((vars->screen.width / 2) * (1 +\
-	t->transformX / t->transformY));
-	t->spriteHeight = abs((int)(vars->screen.height / t->transformY));
-	t->drawStartY = -t->spriteHeight / 2 + vars->screen.height / 2;
-	if (t->drawStartY < 0)
-		t->drawStartY = 0;
-	t->drawEndY = t->spriteHeight / 2 + vars->screen.height / 2;
-	if (t->drawEndY >= vars->screen.height)
-		t->drawEndY = vars->screen.height - 1;
-	t->spriteWidth = abs((int)(vars->screen.height / t->transformY));
-	t->drawStartX = -t->spriteWidth / 2 + t->spriteScreenX;
-	if (t->drawStartX < 0)
-		t->drawStartX = 0;
-	t->drawEndX = t->spriteWidth / 2 + t->spriteScreenX;
-	if (t->drawEndX >= vars->screen.width)
-		t->drawEndX = vars->screen.width - 1;
-	t->stripe = t->drawStartX;
+	t->transformx = t->invdet * (vars->player.dir_y * t->spritex -\
+	vars->player.dir_x * t->spritey);
+	t->transformy = t->invdet * (-vars->player.plane_y * t->spritex +\
+	vars->player.plane_x * t->spritey);
+	t->spritescreenx = (int)((vars->screen.width / 2) * (1 +\
+	t->transformx / t->transformy));
+	t->sprite_h = abs((int)(vars->screen.height / t->transformy));
+	t->drawstarty = -t->sprite_h / 2 + vars->screen.height / 2;
+	if (t->drawstarty < 0)
+		t->drawstarty = 0;
+	t->drawendy = t->sprite_h / 2 + vars->screen.height / 2;
+	if (t->drawendy >= vars->screen.height)
+		t->drawendy = vars->screen.height - 1;
+	t->sprite_w = abs((int)(vars->screen.height / t->transformy));
+	t->drawstartx = -t->sprite_w / 2 + t->spritescreenx;
+	if (t->drawstartx < 0)
+		t->drawstartx = 0;
+	t->drawendx = t->sprite_w / 2 + t->spritescreenx;
+	if (t->drawendx >= vars->screen.width)
+		t->drawendx = vars->screen.width - 1;
+	t->stripe = t->drawstartx;
 }
 
 static void	draw_sprites(t_vars *vars, t_draw_sprites *t)
 {
-	while (t->stripe < t->drawEndX)
+	while (t->stripe < t->drawendx)
 	{
-		t->texX = (int)(256 * (t->stripe - (-t->spriteWidth / 2 +\
-		t->spriteScreenX)) * vars->tex_sprite.width / t->spriteWidth) / 256;
-		if (t->transformY > 0 && t->stripe > 0 && t->stripe <\
-		vars->screen.width && t->transformY < vars->z_buffer[t->stripe])
+		t->tex_x = (int)(256 * (t->stripe - (-t->sprite_w / 2 +\
+		t->spritescreenx)) * vars->tex_sprite.width / t->sprite_w) / 256;
+		if (t->transformy > 0 && t->stripe > 0 && t->stripe <\
+		vars->screen.width && t->transformy < vars->z_buffer[t->stripe])
 		{
-			t->j = t->drawStartY - 1;
-			while ((++t->j) < t->drawEndY)
+			t->j = t->drawstarty - 1;
+			while ((++t->j) < t->drawendy)
 			{
 				t->d = t->j * 256 - vars->screen.height * 128 +\
-				t->spriteHeight * 128;
-				t->texY = ((t->d * vars->tex_sprite.height) /\
-				t->spriteHeight) / 256;
-				t->color = *(unsigned int *)(vars->tex_sprite.addr + (t->texY *\
-				vars->tex_sprite.size_line + t->texX *\
+				t->sprite_h * 128;
+				t->tex_y = ((t->d * vars->tex_sprite.height) /\
+				t->sprite_h) / 256;
+				t->color = *(unsigned int *)(vars->tex_sprite.addr + \
+				(t->tex_y * vars->tex_sprite.size_line + t->tex_x *\
 				(vars->tex_sprite.bbp / 8)));
 				t->color = \
 				get_darker_color(t->color, vars->sprites[t->i]->len / 6);

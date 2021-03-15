@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 15:35:41 by plurlene          #+#    #+#             */
-/*   Updated: 2021/02/15 19:51:57 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:06:31 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,11 @@ static int	del(char **reliquo)
 
 static int	getres(char **reliquo, char **line, int *rs)
 {
-	int		end_i;
+	int		i;
 	char	*out;
 
 	out = NULL;
-	end_i = e_l_i(*reliquo) < 0 ? ft_strlen1(*reliquo) : e_l_i(*reliquo);
+	i = e_l_i(*reliquo) < 0 ? ft_strlen1(*reliquo) : e_l_i(*reliquo);
 	if (e_l_i(*reliquo) < 0)
 	{
 		if (!(*line = ft_strdup1(*reliquo, 0)) && del(reliquo))
@@ -36,9 +36,9 @@ static int	getres(char **reliquo, char **line, int *rs)
 	}
 	else
 	{
-		(*reliquo)[end_i] = '\0';
-		*line = end_i != 0 ? ft_strdup1(*reliquo, 0) : ft_strjoin1("\0", "\0", 0);
-		if ((*rs = end_i + 1) && !(*line) && del(reliquo))
+		(*reliquo)[i] = '\0';
+		*line = i != 0 ? ft_strdup1(*reliquo, 0) : ft_strjoin1("\0", "\0", 0);
+		if ((*rs = i + 1) && !(*line) && del(reliquo))
 			return (1);
 	}
 	if (*reliquo && !(out = ft_strdup1(&((*reliquo)[*rs]), 0)) && del(reliquo))

@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/29 16:13:10 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/05 17:34:08 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:06:39 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,5 @@ char	*ft_strchr(const char *s, int c)
 			return (&((char *)s)[i]);
 		i++;
 	}
-	// if ((char)c == '\0')
-	// 	return (&((char *)s)[i]);
 	return (0);
 }
