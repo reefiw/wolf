@@ -6,13 +6,22 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:36 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/12 20:10:48 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 14:54:35 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
 
-void	put_pixel(t_image *img, int x, int y, int color)
+unsigned int	get_darker_color(unsigned int color, double size)
+{
+	if (size <= 1)
+		return (color);
+	return ((int)(((0xFF0000 & color) >> 16) / size) << 16) +\
+	((int)(((0x00FF00 & color) >> 8) / size) << 8) +\
+	((int)(0x0000FF & color) / size);
+}
+
+void			put_pixel(t_image *img, int x, int y, int color)
 {
 	char *pixel;
 
@@ -20,7 +29,7 @@ void	put_pixel(t_image *img, int x, int y, int color)
 	*(unsigned int *)pixel = color;
 }
 
-void	fill_back(t_image *img, t_vars *vars)
+void			fill_back(t_image *img, t_vars *vars)
 {
 	int i;
 	int j;

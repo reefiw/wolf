@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 16:36:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/10 17:40:46 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 14:56:13 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ int			key_hook(int key_code, void *param)
 	t_vars	*vars;
 
 	vars = (t_vars *)param;
+	if (key_code == 53)
+		exit(0);
 	dir_x = vars->player.dir_x;
 	dir_y = vars->player.dir_y;
 	if (vars->player.dir_x == 1)
@@ -108,6 +110,5 @@ int			key_hook(int key_code, void *param)
 	mlx_do_sync(vars->mlx);
 	put_image(vars);
 	mlx_put_image_to_window(vars->mlx, vars->mlx_window, vars->img.img, 0, 0);
-	printf("key_code: %d\n", key_code);
 	return (1);
 }

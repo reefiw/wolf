@@ -1,21 +1,21 @@
 NAME=cub3D
-SRCS = cube3d.c GNL/get_next_line.c GNL/get_next_line_utils.c dda.c inits.c moves.c draw_sprites.c error_handler.c \
-		floor_ceiling.c ft_substr.c parser.c simplest_drawing.c screenshot.c other.c color_texture_resolution_parser.c\
-		file_and_map_parser.c player_and_sprite_parser.c
+SRCS = ./functions/cube3d.c ./functions/GNL/get_next_line.c ./functions/GNL/get_next_line_utils.c ./functions/dda.c ./functions/inits.c ./functions/moves.c ./functions/draw_sprites.c ./functions/error_handler.c \
+		./functions/floor_ceiling.c ./functions/ft_substr.c ./functions/parser.c ./functions/simplest_drawing.c ./functions/screenshot.c ./functions/other.c ./functions/color_texture_resolution_parser.c\
+		./functions/file_and_map_parser.c ./functions/player_and_sprite_parser.c
 OBJS = $(SRCS:.c=.o)
 LIBS = libft.a libmlx.dylib
-INCLUDES = cube3D.h
+INCLUDES = ./functions/cube3D.h
 all: $(SRCS) $(NAME)
 $(NAME): $(OBJS)
-	make -C libft/ bonus
-	cp libft/libft.a .
+	make -C ./functions/libft/ bonus
+	cp ./functions/libft/libft.a .
 	make -C minilibx/
 	cp minilibx/libmlx.dylib .
 	gcc -framework OpenGL -framework AppKit -o $(NAME) $(OBJS) $(LIBS)
 .c.o:
-	gcc -Iminilibx -Ilibft -I$(INCLUDES) -c $< -o $@
+	gcc -Iminilibx -I./functions/libft -I$(INCLUDES) -c $< -o $@
 clean:
-	make -C libft/ fclean
+	make -C ./functions/libft/ fclean
 	make -C minilibx/ clean
 	rm -f $(OBJS) $(LIBS)
 fclean: clean

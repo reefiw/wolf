@@ -6,20 +6,11 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 14:40:31 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 14:54:13 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cube3D.h"
-
-unsigned int	get_darker_color(unsigned int color, double size)
-{
-	if (size <= 1)
-		return (color);
-	return ((int)(((0xFF0000 & color) >> 16) / size) << 16) +\
-	((int)(((0x00FF00 & color) >> 8) / size) << 8) +\
-	((int)(0x0000FF & color) / size);
-}
 
 t_tex			*get_tex(t_vars *vars, int side)
 {
@@ -42,12 +33,18 @@ void			get_img_and_add(t_vars vars, t_tex *tex)
 	mlx_get_data_addr(tex->img, &tex->bbp, &tex->size_line, &tex->endian);
 }
 
+int				stop_cub(int key_press, void *param)
+{
+	exit(0);
+}
+
 static void		start_cub(t_vars vars)
 {
 	vars.mlx_window =\
 	mlx_new_window(vars.mlx, vars.screen.width, vars.screen.height, "cube3D");
 	mlx_put_image_to_window(vars.mlx, vars.mlx_window, vars.img.img, 0, 0);
 	mlx_hook(vars.mlx_window, 2, 1L << 0, key_hook, &vars);
+	mlx_hook(vars.mlx_window, 17, 1L << 2, stop_cub, &vars);
 	mlx_loop(vars.mlx);
 }
 
