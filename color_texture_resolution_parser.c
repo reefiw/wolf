@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 19:54:07 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/12 20:09:03 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 14:28:09 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,16 @@ void		resolution_parser(char *str, t_vars *vars)
 	check_err(res_str[0] != 'R', "invalid resolution\n");
 	i = scip_whitespaces(&res_str[1], 1);
 	check_err(!ft_isdigit(res_str[i]), "invalid resolution\n");
-	vars->screen.width = 0;
 	vars->screen.width = ft_atoi(&res_str[i]);
 	vars->screen.width = vars->screen.width > mw ? mw : vars->screen.width;
+	vars->screen.width = vars->screen.width < 0 ? mw : vars->screen.width;
 	while (ft_isdigit(res_str[i]))
 		i++;
 	i = scip_whitespaces(&res_str[i], i);
 	check_err(!ft_isdigit(res_str[i]), "invalid resolution\n");
-	vars->screen.height = 0;
 	vars->screen.height = ft_atoi(&res_str[i]);
 	vars->screen.height = vars->screen.height > mh ? mh : vars->screen.height;
+	vars->screen.height = vars->screen.height < 0 ? mh : vars->screen.height;
 	check_err(!vars->screen.height || !vars->screen.width, "bad resolution\n");
 	while (ft_isdigit(res_str[i]))
 		i++;
