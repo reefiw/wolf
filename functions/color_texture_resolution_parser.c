@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 19:54:07 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 18:17:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ void		texture_parser(char *str, t_tex *tex, t_vars *vars)
 
 	check_err(tex->width && tex->height, "invalid texture\n");
 	res_str = ft_strtrim(str, " ");
+	if (!ft_strnstr(&res_str[ft_strlen(res_str) - 4], ".xpm", 4))
+		error_handler("invalid texture\n");
 	i = scip_whitespaces(&res_str[2], 2);
 	tex->path = ft_strdup(&res_str[i]);
 	if ((i = open(tex->path, O_RDONLY)) < 0)

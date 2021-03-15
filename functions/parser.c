@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 15:41:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 18:47:07 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	parser_switch(char *str, t_vars *vars)
 		texture_parser(str, &vars->tex_sprite, vars);
 	if (parser_case(str, "F ", 2) && !vars->color_floor && (++k))
 		color_parser(str, vars, &vars->color_floor);
-	if (parser_case(str, "C ", 2) && !vars->color_floor && (++k))
+	if (parser_case(str, "C ", 2) && !vars->color_ceiling && (++k))
 		color_parser(str, vars, &vars->color_ceiling);
 	return (k);
 }

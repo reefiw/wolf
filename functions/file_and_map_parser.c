@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 20:00:32 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 18:36:53 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ char		**get_head(int fd, t_vars *vars)
 		if (ft_strchr("012", line[k]))
 			break ;
 		buf = ft_strjoin1(buf, "\n", 1);
-		buf = ft_strjoin1(buf, line, 1);
+		buf = ft_strjoin1(buf, &line[k], 1);
 		free(line);
 	}
 	if (!ft_strchr("012", line[k]))
