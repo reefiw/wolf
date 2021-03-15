@@ -11,7 +11,7 @@ OBJS = $(SRCS:.c=.o)
 INCLUDES = ./functions/cube3d.h
 all: $(SRCS) $(NAME)
 $(NAME): $(OBJS)
-	make -C ./functions/libft/ bonus
+	make -C ./functions/libft/
 	cp ./functions/libft/libft.a .
 	make -C minilibx/
 	cp minilibx/libmlx.dylib .
@@ -27,7 +27,7 @@ fclean: clean
 re: fclean all
 bonus: $(BNS) $(NAMEBNS)
 $(NAMEBNS): $(BNSOBJ)
-	make -C ./functions/libft/ bonus
+	make -C ./functions/libft/
 	cp ./functions/libft/libft.a .
 	make -C minilibx/
 	cp minilibx/libmlx.dylib .
