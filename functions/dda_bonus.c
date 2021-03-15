@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/09 18:20:39 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:20:46 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ static void	drawing_walls(t_vars *vars, t_dda *t)
 		t->color = *(unsigned int *)(t->tex->addr +\
 		(t->tex_y * t->tex->size_line + t->tex_x * (t->tex->bbp / 8)));
 		t->texpos += t->step;
+		t->color = get_darker_color(t->color, t->wall_dist / 1.5);
 		put_pixel(&vars->img, t->i, t->drawstart, t->color);
 		t->drawstart++;
 	}
@@ -113,6 +114,7 @@ void		put_image(t_vars *vars)
 	t_dda t;
 
 	fill_back(&vars->img, vars);
+	put_floor_ceiling(vars);
 	t.i = 0;
 	while (t.i < vars->screen.width)
 	{
