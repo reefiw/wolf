@@ -12,10 +12,9 @@ INCLUDES = ./functions/cube3d.h
 all: $(SRCS) $(NAME)
 $(NAME): $(INCLUDES) $(OBJS)
 	make -C ./functions/libft/
-	cp ./functions/libft/libft.a .
 	make -C minilibx/
 	cp minilibx/libmlx.dylib .
-	gcc -framework OpenGL -framework AppKit -o $(NAME) $(OBJS) libft.a libmlx.dylib
+	gcc -framework OpenGL -framework AppKit -o $(NAME) $(OBJS) ./functions/libft/libft.a libmlx.dylib
 .c.o:
 	gcc -Iminilibx -I./functions/libft -I$(INCLUDES) -c $< -o $@
 clean:

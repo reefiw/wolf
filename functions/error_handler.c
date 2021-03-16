@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/11 16:03:49 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 17:14:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/16 15:40:06 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ void		error_handler_clear(char *str_err, char **bfree)
 	error_handler(str_err);
 }
 
-void		check_err(int bool, char *err)
+void		check_err(int boolean, char *err)
 {
-	if (bool)
+	if (boolean)
 		error_handler(err);
 }

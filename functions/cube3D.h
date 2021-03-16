@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/17 15:41:38 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/16 15:13:12 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/16 15:40:46 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,7 +202,7 @@ void				error_handler_clear(char *str_err, char **bfree);
 void				main_parser(char *path, t_vars *vars);
 void				get_img_and_add(t_vars vars, t_tex *tex);
 void				do_screenshot(t_vars *vars);
-void				check_err(int bool, char *err);
+void				check_err(int boolean, char *err);
 int					scip_whitespaces(char *str, int s);
 int					scip_digits(char *str, int flag, int bias);
 void				clear_str_arr(char **arr);
