@@ -10,7 +10,7 @@ BNSOBJ = $(BNS:.c=.o)
 OBJS = $(SRCS:.c=.o)
 INCLUDES = ./functions/cube3d.h
 all: $(SRCS) $(NAME)
-$(NAME): $(OBJS)
+$(NAME): $(INCLUDES) $(OBJS)
 	make -C ./functions/libft/
 	cp ./functions/libft/libft.a .
 	make -C minilibx/
@@ -26,7 +26,7 @@ fclean: clean
 	rm -f $(NAME) $(NAMEBNS) libmlx.dylib
 re: fclean all
 bonus: $(BNS) $(NAMEBNS)
-$(NAMEBNS): $(BNSOBJ)
+$(NAMEBNS): $(INCLUDES) $(BNSOBJ)
 	make -C ./functions/libft/
 	cp ./functions/libft/libft.a .
 	make -C minilibx/
