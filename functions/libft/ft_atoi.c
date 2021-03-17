@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 15:06:31 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 14:23:12 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/17 12:34:50 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_atoi(const char *str)
 	while (str[i] >= '0' && str[i] <= '9')
 		res = res * 10 + (str[i++] - '0');
 	if (res > 9223372036854775807 && sign < 0)
-		return (0);
+		return (-1);
 	if (res > 9223372036854775807 && sign > 0)
 		return (-1);
 	return (res * sign);

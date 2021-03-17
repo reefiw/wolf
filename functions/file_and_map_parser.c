@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/12 20:00:32 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 18:36:53 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/17 12:31:59 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ static void	check_whitespace(t_map map, int i, int j)
 	map.data[i - 1][j + 1] == ' ', "invalid map\n");
 	check_err(map.data[i + 1][j - 1] == ' ' || map.data[i + 1][j] == ' ' ||\
 	map.data[i + 1][j + 1] == ' ', "invalid map\n");
+	check_err(ft_strlen(map.data[i - 1]) <= j ||\
+	ft_strlen(map.data[i + 1]) <= j, "invalid map\n");
 }
 
 void		check_map(t_vars *vars)

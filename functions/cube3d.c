@@ -6,7 +6,7 @@
 /*   By: plurlene <plurlene@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/14 14:24:28 by plurlene          #+#    #+#             */
-/*   Updated: 2021/03/15 20:10:59 by plurlene         ###   ########.fr       */
+/*   Updated: 2021/03/17 12:36:58 by plurlene         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ void			get_img_and_add(t_vars vars, t_tex *tex)
 {
 	tex->img =\
 	mlx_xpm_file_to_image(vars.mlx, tex->path, &tex->width, &tex->height);
+	check_err(!tex->img, "invalid texture\n");
 	tex->addr =\
 	mlx_get_data_addr(tex->img, &tex->bbp, &tex->size_line, &tex->endian);
 }
